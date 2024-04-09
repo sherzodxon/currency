@@ -1,4 +1,10 @@
 .table-head{
     margin: 2rem 0;
     display: flex;
+    justify-content: space-between;
+}
+.table-history-wrapper{
+    display: flex;
+    width:35rem;
+    justify-content: space-between;
 }

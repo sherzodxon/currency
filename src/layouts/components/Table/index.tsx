@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import {Button, Input, InputRef, Result, Skeleton, Table,Tag} from "antd";
+import {Button, Form, Input, InputRef, Result, Skeleton, Table,Tag} from "antd";
 import { FiSearch } from "react-icons/fi";
 import {ColumnsType} from 'antd/es/table';
 import {useEffect, useState} from "react";
@@ -24,7 +24,10 @@ const TableSection : React.FC = () => {
     const [error,setError] = useState < Boolean > (false);
     const searchRef = useRef<InputRef>(null);
     const url:any = process.env.REACT_APP_BASE_URL;
-    
+    type FieldType = {
+        code?: string;
+        date?: string;
+      };
     function diffColorChanger(params:number) {
         if (params>0) {
             return "red"
@@ -129,9 +132,21 @@ const TableSection : React.FC = () => {
     return (
         <div>
             <Skeleton loading={isLoading} active>
-                <div className="table-head">
-                   
+                <div className="table-head">   
                 <Input type='text' onChange={handleSearchInput} ref={searchRef} style={{width:"30rem"}} size="large" color='red' placeholder="Qidirish" prefix={<FiSearch color='gray' style={{width:"2rem", height:"2rem"}} />} />
+                <Form className="table-history-wrapper">
+                    <Form.Item<FieldType>  name="code"  rules={[{ required: true, message: 'Iltimos kodni kiriting!' }]}>
+                    <Input size="large" style={{textTransform:'uppercase',width:"60px"}} type='text' placeholder='USD' maxLength={3} pattern="[A-Z]{3}" />
+                    </Form.Item>
+                    <Form.Item<FieldType>  name="date"  rules={[{ required: true, message: 'Iltimos vaqtni kiriting!' }]}>
+                    <Input size='large' type='date' style={{maxWidth:"15rem"}}/>
+                    </Form.Item>
+                    
+                    <Form.Item>
+                    <Button size='large' type="primary" htmlType="submit">Yuborish
+                   </Button>
+    </Form.Item>
+                </Form>
                 </div>
             <Table<Currency>
                 dataSource={data}

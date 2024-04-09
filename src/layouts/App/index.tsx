@@ -7,7 +7,7 @@ type AppLayoutProps = {}
 const AppLayout : React.FC < AppLayoutProps > = () => {
    
     return (
-        <div>
+        <div className="container">
          <Header/>
             <Routes>
                 {routes.map(({path,id, element: Component}) => (

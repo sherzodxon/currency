@@ -37,8 +37,17 @@ html{
    
 }
 body{
-    //background-color: rgb(5, 44, 44);
+    background-color: rgb(5, 44, 44);
     font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.container{
+  background-color: #fff;
+  border-radius: 1rem;
+  padding: 2.4rem;
+  margin: 2.4rem;
+  min-height: 80vh;
 }
 .ant-table-column-title{
     font-family: 'Poppins', sans-serif; 
