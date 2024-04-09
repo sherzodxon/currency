@@ -1,0 +1,67 @@
+//@import '~antd/dist/antd.css';
+html{
+  font-size: 62.5%;
+}
+.ant-typography {
+  font-family: 'Poppins', sans-serif; /* Change font for typography components */
+}
+
+/* Apply the font family to specific components if needed */
+/* Example: Apply font family to buttons */
+.ant-btn {
+  font-family: 'Poppins', sans-serif;
+}
+.ant-pagination .ant-pagination-options {
+    display: none;
+}
+.ant-table-wrapper .ant-table-pagination.ant-pagination{
+    margin: 24px 0;
+}
+.ant-table-wrapper .ant-table-pagination-right{
+   justify-content: center;
+  
+}
+/* Apply font family to headings */
+.ant-typography h1,
+.ant-typography h2,
+.ant-typography h3,
+.ant-typography h4,
+.ant-typography h5,
+.ant-typography h6 {
+  font-family: 'Poppins', sans-serif;
+}
+.ant-table-cell{
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 500;
+    font-size: 16px;
+   
+}
+body{
+    //background-color: rgb(5, 44, 44);
+    font-family: 'Poppins', sans-serif;
+}
+.ant-table-column-title{
+    font-family: 'Poppins', sans-serif; 
+    
+}
+th{
+    text-align: center;
+
+}
+a{
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 500;
+    font-size: 16px;
+}
+/* Apply font family to paragraphs */
+.ant-typography p {
+  font-family: 'Poppins', sans-serif;
+}
+.ant-typography td {
+    font-family: 'Poppins', sans-serif;
+  }
+/* Apply font family to other components as needed */
+/* Example: Apply font family to inputs */
+.ant-input {
+  font-family: 'Poppins', sans-serif;
+}

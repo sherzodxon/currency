@@ -1,41 +1,57 @@
-import React from 'react';
-import {Table} from "antd";
+import React, { useRef } from 'react';
+import {Button, Input, InputRef, Result, Skeleton, Table,Tag} from "antd";
+import { FiSearch } from "react-icons/fi";
 import {ColumnsType} from 'antd/es/table';
 import {useEffect, useState} from "react";
+import {ArrowUpOutlined,ArrowDownOutlined} from '@ant-design/icons';
+import './index.scss'
 
 interface Currency {
-    id : number;
+    key : number;
     CcyNm_UZ : string;
     Rate : number;
     Date : string;
     Ccy : string;
     Diff : string;
-    key: React.Key;
-}
-interface Columns { // Define an interface for your data structure
-    title : string;
-    dataIndex : string;
-    key : React.Key;
 }
 
 const TableSection : React.FC = () => {
-
-    const [currencies,
-        setCurrencies] = useState < Currency[] > ([]);
-    const [loading,
-        setLoading] = useState < Boolean > (true);
-    const [error,
-        setError] = useState < Boolean > (false);
+    const [data,setData] = useState < Currency[] > ([]);
+    const [currencies,setCurrencies] = useState < Currency[] > ([]);
+    const [isLoading,setLoading] = useState (true);
+    const [searchData,setSearchData]=useState<Currency[]>([]);
+    const [searchValue,setSearchValue]=useState<String>("")
+    const [error,setError] = useState < Boolean > (false);
+    const searchRef = useRef<InputRef>(null);
+    const url:any = process.env.REACT_APP_BASE_URL;
+    
+    function diffColorChanger(params:number) {
+        if (params>0) {
+            return "red"
+            
+        }
+        else if (params === 0) {
+            return "cyan"
+        }
+        else
+        return "green"
+    }
+    function diffIconChanger(params:number) {
+        if (params>0) {
+            return false
+        }
+        else return true
+    }
     useEffect(() => {
         const fetchCurrencies = async() => {
             try {
-                const response = await fetch('https://cbu.uz/ru/arkhiv-kursov-valyut/json/');
+                const response = await fetch(url);
                 if (!response.ok) {
                     setError(true)
                 }
                 const data = await response.json();
                 const mappedCurrencies = data.map((currency : any) => ({
-                    id: currency.id,
+                    key: currency.id,
                     CcyNm_UZ: currency.CcyNm_UZ,
                     Rate: currency.Rate,
                     Date: currency.Date,
@@ -46,12 +62,31 @@ const TableSection : React.FC = () => {
                 setCurrencies(mappedCurrencies);
                 setLoading(false)
             } catch (error) {
-                console.error('Xatolik yuz berdi:', error);
+               setError(true)
             }
         };
         fetchCurrencies();
     }, []);
-
+    useEffect(()=>{
+       if (searchData.length) {
+        setData(searchData)
+       }
+       else setData(currencies)
+    },[currencies,searchValue])
+    function handleSearchInput() {
+        if (searchRef.current) {
+            const searchValue:any = searchRef.current.input?.value
+            setSearchValue(searchValue)
+            const foundData = currencies.filter((el) => {
+                
+                const searchRegExp = new RegExp(searchValue, "gi");
+                const searchText = `${el.CcyNm_UZ}`;
+                return searchText.match(searchRegExp);
+    
+            })  
+            setSearchData(foundData)
+           }
+    }
     const columns : ColumnsType < Currency > = [
         {
             title: 'Nomi',
@@ -70,20 +105,40 @@ const TableSection : React.FC = () => {
         }, {
             title: "O'zgarishi",
             dataIndex: 'Diff',
-            key: 'diff'
+            key: 'diff',
+            render:(diff)=>(
+              <Tag bordered={false} icon={diffIconChanger(-diff)?<ArrowUpOutlined/>:<ArrowDownOutlined/>} color={diffColorChanger(-diff)}>{diff}</Tag>
+            )
         }, {
             title: "Sana",
             dataIndex: 'Date',
             key: 'date'
         }
     ];
+    if (error) {
+        return(
+            <Result
+            status="404"
+            title="403"
+            subTitle="Iltimos! Qaytadan urinib ko'ring."
+            extra={<Button onClick={()=>window.location.reload()} type="primary">Qayta boshlash</Button>}
+             />
+        )
+    }
+    else
     return (
         <div>
+            <Skeleton loading={isLoading} active>
+                <div className="table-head">
+                   
+                <Input type='text' onChange={handleSearchInput} ref={searchRef} style={{width:"30rem"}} size="large" color='red' placeholder="Qidirish" prefix={<FiSearch color='gray' style={{width:"2rem", height:"2rem"}} />} />
+                </div>
             <Table<Currency>
-                
-                dataSource={currencies}
+                dataSource={data}
                 columns={columns}
                 />
+            </Skeleton>
+           
         </div>
     )
 }
