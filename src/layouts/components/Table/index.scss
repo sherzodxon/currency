@@ -18,7 +18,7 @@
 }
 @media only screen and (max-width:750px){
  .table-history-wrapper{
-    width: 32rem;
+    width: 35rem;
  }
     .table-form-date , .table-form-code ,.table-form-button{
         font-size: 1.6rem;
@@ -34,7 +34,7 @@
     }
        
     .table-form-date{
-        width: 14rem !important;
+        width: 16rem !important;
     }
 }
 @media only screen and (max-width:580px){
@@ -43,6 +43,7 @@
         position: relative;
         padding: 1rem ;
     }
+    
 .table-search-input{
      width: 100% !important;
      margin-bottom: 1.6rem;
@@ -52,8 +53,8 @@
 }
 
 .table-history-wrapper{
-    max-width: 80% ;
-    width: 80%;
+    max-width: 85% ;
+    width: 85%;
     margin: 0 auto;
     position: relative;
 }
