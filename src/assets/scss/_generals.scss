@@ -1,13 +1,10 @@
-//@import '~antd/dist/antd.css';
 html{
   font-size: 62.5%;
 }
 .ant-typography {
-  font-family: 'Poppins', sans-serif; /* Change font for typography components */
+  font-family: 'Poppins', sans-serif; 
 }
 
-/* Apply the font family to specific components if needed */
-/* Example: Apply font family to buttons */
 .ant-btn {
   font-family: 'Poppins', sans-serif;
 }
@@ -15,13 +12,13 @@ html{
     display: none;
 }
 .ant-table-wrapper .ant-table-pagination.ant-pagination{
-    margin: 24px 0;
+    margin: 2.4rem 0;
 }
 .ant-table-wrapper .ant-table-pagination-right{
    justify-content: center;
   
 }
-/* Apply font family to headings */
+
 .ant-typography h1,
 .ant-typography h2,
 .ant-typography h3,
@@ -33,7 +30,9 @@ html{
 .ant-table-cell{
     font-family: 'Poppins', sans-serif; 
     font-weight: 500;
-    font-size: 16px;
+    font-size: 1.6rem;
+    padding: 1.6rem;
+   
    
 }
 body{
@@ -51,26 +50,52 @@ body{
 }
 .ant-table-column-title{
     font-family: 'Poppins', sans-serif; 
-    
+}
+td{
+  padding: 1.6rem !important;
 }
 th{
     text-align: center;
-
+    font-size: 1.6rem;
 }
 a{
     font-family: 'Poppins', sans-serif; 
     font-weight: 500;
-    font-size: 16px;
+    font-size: 1.6rem;
 }
-/* Apply font family to paragraphs */
-.ant-typography p {
+
+.ant-typography p , td {
   font-family: 'Poppins', sans-serif;
 }
 .ant-typography td {
     font-family: 'Poppins', sans-serif;
   }
-/* Apply font family to other components as needed */
-/* Example: Apply font family to inputs */
 .ant-input {
   font-family: 'Poppins', sans-serif;
+}
+
+@media only screen and (max-width:700px){
+  html{
+    font-size: 50%;
+  }
+  .container{
+    padding: 2rem 1rem;
+    margin:  4rem 1rem;
+  }
+  .ant-table-cell{
+    font-size: 1.4rem;
+    padding: 1.2rem 0.8rem !important;
+    &:first-child{
+      max-width: 14rem;
+    }
+    &:last-child{
+      font-size: 1.2rem;
+      max-width: 7.5rem;
+    }
+  }
+  // .ant-input{
+  //   padding: 0.5 0.8rem !important;
+  //   font-size: 1.6rem !important;
+  // }
+  
 }
