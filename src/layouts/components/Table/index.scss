@@ -31,13 +31,17 @@
         font-size: 1.6rem;
         line-height: 0;
         display: block; 
+    }
        
-    } 
+    .table-form-date{
+        width: 14rem !important;
+    }
 }
 @media only screen and (max-width:580px){
     .table-head{
         flex-direction: column;
         position: relative;
+        padding: 1rem ;
     }
 .table-search-input{
      width: 100% !important;
