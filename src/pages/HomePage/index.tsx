@@ -1,9 +1,11 @@
+import TableSection from "../../assets/components/Table";
+
 type HomePageProps = {}
  
 const HomePage:React.FC<HomePageProps> = () => {
     return (
         <div>
-            HomePage
+           <TableSection/>
         </div>
     );
 }

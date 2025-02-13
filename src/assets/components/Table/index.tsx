@@ -1,6 +1,7 @@
 import React, {useRef} from 'react';
 import {
     Button,
+    DatePicker,
     Form,
     Input,
     InputRef,
@@ -14,6 +15,10 @@ import {ColumnsType} from 'antd/es/table';
 import {useEffect, useState} from "react";
 import {ArrowUpOutlined, ArrowDownOutlined} from '@ant-design/icons';
 import './index.scss'
+import { useSelector } from 'react-redux';
+import {useDataCurrency } from '../../../contexts/currencyProvider';
+import { getFirstTwoLetters } from '../../../functions';
+
 
 interface Currency {
     key : number;
@@ -25,20 +30,16 @@ interface Currency {
 }
 
 const TableSection : React.FC = () => {
-    const [data,
-        setData] = useState < Currency[] > ([]);
-    const [currencies,
-        setCurrencies] = useState < Currency[] > ([]);
-    const [isLoading,
-        setLoading] = useState(true);
-    const [searchData,
-        setSearchData] = useState < Currency[] > ([]);
-    const [searchValue,
-        setSearchValue] = useState < String > ("")
-    const [error,
-        setError] = useState < Boolean > (false);
+    const [data,setData] = useState < Currency[] > ([]);
+    const {currencies,setCurrencies} = useDataCurrency()
+    const isLoading = useSelector((state:any)=>state.isLoading.loading);
+    const theme= useSelector((state:any)=>state.theme.theme)
+    const [searchData,setSearchData] = useState < Currency[] > ([]);
+    const [searchValue,setSearchValue] = useState < String > ("")
+    const [error,setError] = useState < Boolean > (false);
     const searchRef = useRef < InputRef > (null);
     const url : any = process.env.REACT_APP_BASE_URL;
+   
     type FieldType = {
         code?: string;
         date?: string;
@@ -58,37 +59,14 @@ const TableSection : React.FC = () => {
         } else 
             return true
     }
-    useEffect(() => {
-        const fetchCurrencies = async() => {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    setError(true)
-                }
-                const data = await response.json();
-                const mappedCurrencies = data.map((currency : any) => ({
-                    key: currency.id,
-                    CcyNm_UZ: currency.CcyNm_UZ,
-                    Rate: currency.Rate,
-                    Date: currency.Date,
-                    Ccy: currency.Ccy,
-                    Diff: currency.Diff
-
-                }))as Currency[];
-                setCurrencies(mappedCurrencies);
-                setLoading(false)
-            } catch (error) {
-                setError(true)
-            }
-        };
-        fetchCurrencies();
-    }, []);
+    
     useEffect(() => {
         if (searchData.length) {
             setData(searchData)
         } else 
             setData(currencies)
-    }, [currencies, searchValue])
+    }, [currencies, searchValue]);
+
     function handleSearchInput() {
         if (searchRef.current) {
             const searchValue : any = searchRef.current.input
@@ -101,30 +79,40 @@ const TableSection : React.FC = () => {
                 return searchText.match(searchRegExp);
 
             })
-            setSearchData(foundData)
+            setSearchData(foundData);
         }
     }
+    
     const columns : ColumnsType < Currency > = [
         {
             title: 'Nomi',
             dataIndex: 'CcyNm_UZ',
             key: 'name',
-            sorter: (a, b) => a.CcyNm_UZ.length - b.CcyNm_UZ.length
+           
+            // sorter: (a, b) => a.CcyNm_UZ.length - b.CcyNm_UZ.length
         }, {
             title: 'Kodi',
             dataIndex: 'Ccy',
-            key: 'code'
+            key: 'code',
+            render:(ccy)=>(
+                <div className='table-name-wrapper'>
+                    <div className='table-flag' style={{backgroundImage:`url('https://purecatamphetamine.github.io/country-flag-icons/3x2/${getFirstTwoLetters(ccy)}.svg')`}}></div>
+                    <p className='table-currency-name'>{ccy}</p>
+                   
+                </div>
+            )
         }, {
-            title: "Kursi",
+            title: "Kursi (so'm)",
             dataIndex: 'Rate',
             key: 'rate',
-            sorter: (a, b) => a.Rate - b.Rate
+            // sorter: (a, b) => a.Rate - b.Rate
         }, {
             title: "O'zgarishi",
             dataIndex: 'Diff',
             key: 'diff',
             render: (diff) => (
                 <Tag
+                    style={{background: theme==="dark"?'#0E1418':"#fff", width:"80px",textAlign:"center",fontSize:"16px",borderRadius:"100px",padding:"5px 8px"}}
                     bordered={false}
                     icon={diffIconChanger(-diff)
                     ? <ArrowUpOutlined/>
@@ -145,7 +133,7 @@ const TableSection : React.FC = () => {
             if (!response.ok) {
                 setError(true)
             }
-            setLoading(true)
+            // setLoading(true)
             const data = await response.json();
             const historyCurrency = data.map((currency : any) => ({
                 key: currency.id,
@@ -157,7 +145,7 @@ const TableSection : React.FC = () => {
 
             }))as Currency[];
             setCurrencies(historyCurrency);
-            setLoading(false)
+            // setLoading(false)
         } catch (error) {
             setError(true)
         }
@@ -177,22 +165,25 @@ const TableSection : React.FC = () => {
             <Skeleton loading={isLoading} active>
                 <div className="table-head">
                     <Input
-                        type='text'
+                        type='text' 
                         onChange={handleSearchInput}
                         ref={searchRef}
                         style={{
-                        width: "30rem"
-                    }}
-                        className='table-search-input'
+                        width: "30rem", 
+                        // outlineColor:"#0E1418",
+                        borderRadius:"100px"
+                        
+                    }}  
+                        className={theme=="dark"?"table-search-input table-search-input--dark":" table-search-input table-search-input--light"}
                         size="large"
-                        color='red'
+                        
                         placeholder="Qidirish"
-                        prefix={< FiSearch color = 'gray' style = {{width:"2rem", height:"2rem"}}/>}/>
+                        prefix={< FiSearch color = '#838383' style = {{width:"2rem", height:"2rem"}}/>}/>
                     <Form onFinish={onFinish} className="table-history-wrapper">
                         <Form.Item<FieldType>
                             name="code">
                             <Input
-                                className='table-form-code'
+                               className={theme=="dark"?"table-form-code table-search-input--dark":"table-form-code table-search-input--light"}
                                 size="large"
                                 style={{
                                 textTransform: 'uppercase',
@@ -207,10 +198,10 @@ const TableSection : React.FC = () => {
                                     message: 'Iltimos vaqtni kiriting!'
                                 }
                             ]}>
-                            <Input
-                                className='table-form-date'
-                                size='large'
-                                type='date'
+                            <DatePicker
+                                className={theme=="dark"?"table-form-date table-search-input--dark":"table-form-date table-search-input--light"}
+                                placeholder='Sana'
+                                  size='large'
                                />
                         </Form.Item>
                         <Form.Item>
@@ -218,6 +209,7 @@ const TableSection : React.FC = () => {
                                 size='large'
                                 className='table-form-button'
                                 type="primary"
+                                style={{borderRadius:"100px"}}
                                 htmlType="submit">Yuborish
                             </Button>
                         </Form.Item>
@@ -226,6 +218,12 @@ const TableSection : React.FC = () => {
                 <Table<Currency>
                     dataSource={data}
                     columns={columns}
+                    className={theme==="dark"?"dark-table":"light-table"}
+                    pagination={{
+                        pageSize:6,
+                       className:"pagination"
+                    }}
+                    
                     />
                 </Skeleton>
 

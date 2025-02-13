@@ -1,5 +1,8 @@
 import {ElementType} from "react";
-import Table from "../layouts/components/Table";
+import HomePage from "./HomePage";
+import DashboardPage from "./DashboardPage";
+import SettingsPage from "./SettingsPage";
+import TransactionPage from "./TransactionPage";
 interface Route {
     id : number,
     path : string,
@@ -9,6 +12,21 @@ export const routes : Route[] = [
     {
         id: 1,
         path: "/",
-        element: Table
+        element: HomePage
+    },
+    {
+        id:2,
+        path:"/dashboard",
+        element:DashboardPage
+    },
+    {
+        id:3,
+        path:"/transaction",
+        element:TransactionPage
+    },
+    {
+        id:4,
+        path:"/settings",
+        element:SettingsPage
     }
 ]
