@@ -3,6 +3,9 @@ html {
 }
 *{
     transition: color 0.1s, background-color 0.4s;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 .ant-typography {
     font-family: 'Poppins', sans-serif;
@@ -33,9 +36,8 @@ html {
 .ant-table-cell {
     font-family: 'Poppins', sans-serif;
     font-weight: 500;
-    font-size: 1.6rem;
-    padding: 1.6rem;
-
+  
+ 
 }
 body {
    
@@ -114,8 +116,7 @@ td {
     }
     .ant-table-thead {
         background-color: #212537 !important;
-        color: #D3D7E0 !important;
-       
+        color: #D3D7E0 !important; 
     }
     .ant-table-cell {
         background-color: #212537 !important;
@@ -126,9 +127,7 @@ td {
        }
     }
     .ant-pagination-item a{
-        
             color: #D3D7E0 !important;
-        
     }
     .ant-input{
         background-color: #0E1418 !important;
@@ -180,6 +179,19 @@ td {
     }
    
 }
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    border: 0;
+    padding: 0;
+    
+    white-space: nowrap;
+    clip-path: inset(100%);
+    clip: rect(0 0 0 0);
+    overflow: hidden;
+  }
 @media only screen and (max-width:700px) {
     html {
         font-size: 50%;

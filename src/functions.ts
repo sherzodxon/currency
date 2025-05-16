@@ -21,4 +21,12 @@ export function getFirstTwoLetters(word:string) {
     } else {
       return 'Input must be a three-letter word';
     }
-  }
+}
+export function convertToDDMMYY(dateString:string) {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+  const year = String(date.getFullYear()).slice(2); // Get last two digits of year
+
+  return `20${year}-${month}-${day}`;
+}

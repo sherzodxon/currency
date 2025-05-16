@@ -3,16 +3,20 @@ import { sidebarRoutes } from "./sidebarRoutes";
 import './index.scss'
 import { useEffect, useState } from "react";
 import Logo from "../../../assets/image/Logo";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { changeTheme } from "../../../redux/themeSlice/themeSlice";
+import { useMediaPredicate } from "react-media-hook";
 
  
 const Sidebar:React.FC=() => {
     const [checked,setchecked]= useState <Boolean>(false);
+   
     let location = useLocation();
     const theme = useSelector((state:any)=>state.theme.theme) 
-     
+    const dispatch = useDispatch()
+    const preferredTheme= useMediaPredicate("(prefers-color-scheme:dark)")?"dark":"light";
+    const [name,setName]=useState <string>("system");
    
-     
     useEffect(()=>{
     sidebarRoutes.forEach((el)=>{
     if (el.to==location.pathname) {
@@ -22,8 +26,24 @@ const Sidebar:React.FC=() => {
     el.active=false
     setchecked(!checked)
     })
-    },[location])
-    
+    },[location]);
+  
+    function handeButton(params:string) {
+        switch (params) {
+            case "light":
+               setName("system");
+               dispatch(changeTheme(preferredTheme));
+                break;
+            case "system":
+                setName("dark");
+                dispatch(changeTheme("dark"));
+                break;
+            default:
+                setName("light")
+                dispatch(changeTheme("light"))
+                break;
+        }
+    }
     return (
        <section className="sidebar">
         <div className="sidebar-head">
@@ -43,6 +63,9 @@ const Sidebar:React.FC=() => {
                 </li>
                 )
             }
+            <li className="sidebar-item">
+                <button onClick={()=>handeButton(name)} className={`theme-button ${name}-button`}></button>
+            </li>
         </ul>
        </section>
     );

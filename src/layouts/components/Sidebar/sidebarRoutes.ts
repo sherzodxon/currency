@@ -36,8 +36,8 @@ export const sidebarRoutes:Sidebar[]=[
     },
     {
         id:4,
-        to:"/settings",
-        title:"Sozlamalar",
+        to:"/history",
+        title:"History",
         active:false,
         icon:SettingsIcon
     }

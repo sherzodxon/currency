@@ -26,7 +26,7 @@ export const routes : Route[] = [
     },
     {
         id:4,
-        path:"/settings",
+        path:"/history",
         element:SettingsPage
     }
 ]

@@ -1,0 +1,51 @@
+.history-card{
+    margin-top: 30px;
+    &:first-child{
+        margin-top: 0;
+    }
+}
+.history-container{
+    border-radius: 10px;
+    border: 1px solid #94ADEC;
+    padding: 10px;
+    display: none;
+    box-shadow: 1px 1px 10px 1px #94ADEC;
+    max-height: 300px;
+    overflow-y: scroll;
+    &::-webkit-scrollbar-track
+    {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        border-radius: 10px;
+        background-color: transparent !important;
+    }
+    
+   &::-webkit-scrollbar
+    {
+        width: 5px;
+        background-color: transparent !important;
+    }
+    &::-webkit-scrollbar-thumb
+    {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+        background-color: transparent;
+    }
+}
+.history-table{
+    .ant-table-thead{
+        display: none !important;
+    }
+}
+.history-input:checked + .history-wrapper{
+   .history-container{
+    display: block;
+   }
+   .history-label{
+    color: yellowgreen !important;
+   }
+}
+.history-label{
+    font-size: 30px;
+    cursor: pointer;
+    padding-bottom: 20px;
+}
