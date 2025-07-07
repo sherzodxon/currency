@@ -70,6 +70,7 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
     useEffect(() => {
         localStorage.setItem('history', JSON.stringify(historyData || []))
     }, [historyData])
+   console.log(historyData);
    
     return (
         <div>

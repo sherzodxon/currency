@@ -1,0 +1,47 @@
+.transaction-option-wrapper {
+    display: flex;
+    align-items: center;
+}
+.transaction-option-flag {
+    margin-right: 10px;
+}
+.transaction-input-row {
+    display: flex;
+}
+.transaction-code {
+    text-transform: uppercase !important;
+    background-color: transparent !important;
+    color: #D3D7E0;
+    font-size: 24px;
+    --moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+      &:focus {
+       border-color: #D3D7E0 !important;
+       box-shadow: none !important;
+    }
+}
+.ant-select-single .ant-select-selector {
+    font-family: 'Poppins', sans-serif;
+    text-transform: uppercase !important;
+    background-color: transparent !important;
+    width: 100px !important;
+    border: none !important;
+    color: #D3D7E0 !important;
+}
+.ant-select-focused .ant-select-selector,
+.ant-select-selector:focus,
+.ant-select-selector:active,
+.ant-select-open .ant-select-selector {
+  border-color: #d9d9d9 !important;
+  box-shadow: none !important;
+}
+.ant-select-selection{
+  &::placeholder{
+    color: #D3D7E0 !important;
+  }
+}
