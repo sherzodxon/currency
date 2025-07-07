@@ -52,31 +52,25 @@ const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
     }, [preferredTheme]);
 
     useEffect(() => {
-        // const fetchRates = async() => {
-        //     try {
-        //         const response = await fetch('/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates');
+        const fetchRates = async() => {
+            try {
+                const response = await fetch('/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates');
 
-        //         if (!response.ok) {
-        //             setError(true)
-        //         }
-        //         const data = await response.json();
-        //         setSaleDate(data.data
-        //             ?.sections[0]
-        //                 ?.blocks[2]
-        //                     ?.content
-        //                         ?.items);
+                if (!response.ok) {
+                    setError(true)
+                }
+                const data = await response.json();
+                setSaleDate(data.data
+                    ?.sections[0]
+                        ?.blocks[2]
+                            ?.content
+                                ?.items);
 
-        //     } catch (error) {
-        //         setError(true)
-        //     }
-        // }
-        // fetchRates();
-        fetch('api/exchange')
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data); // shu yerda foydalanish
-    })
-    .catch(console.error);
+            } catch (error) {
+                setError(true)
+            }
+        }
+        fetchRates();
     }, [])
     useEffect(() => {
         const fetchCurrencies = async() => {
