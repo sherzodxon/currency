@@ -52,24 +52,47 @@ const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
     }, [preferredTheme]);
 
     useEffect(() => {
-        const fetchRates = async() => {
-            try {
-                const response = await fetch('/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates');
+        // const fetchRates = async() => {
+        //     try {
+        //         const response = await fetch('https://agrobank.uz/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates');
 
-                if (!response.ok) {
-                    setError(true)
-                }
-                const data = await response.json();
-                setSaleDate(data.data
-                    ?.sections[0]
-                        ?.blocks[2]
-                            ?.content
-                                ?.items);
+        //         if (!response.ok) {
+        //             setError(true)
+        //         }
+        //         const data = await response.json();
+        //         setSaleDate(data.data
+        //             ?.sections[0]
+        //                 ?.blocks[2]
+        //                     ?.content
+        //                         ?.items);
 
-            } catch (error) {
-                setError(true)
+        //     } catch (error) {
+        //         setError(true)
+        //     }
+        // }
+        
+    const fetchRates = async () => {
+        try {
+            const response = await fetch('/api/exchange'); // ❗ Vercel function manzili
+            if (!response.ok) {
+                setError(true);
+                return;
             }
+
+            const data = await response.json();
+            setSaleDate(
+                data?.data
+                    ?.sections?.[0]
+                    ?.blocks?.[2]
+                    ?.content?.items
+            );
+            console.log(saleDate);
+            
+        } catch (error) {
+            setError(true);
         }
+    };
+     
         fetchRates();
     }, [])
     useEffect(() => {
