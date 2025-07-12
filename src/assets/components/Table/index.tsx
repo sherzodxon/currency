@@ -1,23 +1,16 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {
     Button,
-    DatePicker,
-    Form,
-    Input,
-    InputRef,
     Result,
     Skeleton,
-    Table,
-    Tag
 } from "antd";
-import {FiSearch} from "react-icons/fi";
-import {ColumnsType} from 'antd/es/table';
 import {useEffect, useState} from "react";
-import {ArrowUpOutlined, ArrowDownOutlined} from '@ant-design/icons';
 import './index.scss'
-import { useSelector } from 'react-redux';
 import {useDataCurrency } from '../../../contexts/currencyProvider';
-import { getFirstTwoLetters } from '../../../functions';
+
+import TableItem from '../TableItem';
+import { useSelector } from 'react-redux';
+import { formatDateTime } from '../../../functions';
 
 
 interface Currency {
@@ -27,63 +20,41 @@ interface Currency {
     Date : string;
     Ccy : string;
     Diff : string;
+    Buy: number;
+    Sale: number;
 }
 
 const TableSection : React.FC = () => {
     const [data,setData] = useState < Currency[] > ([]);
-    const {currencies,setCurrencies} = useDataCurrency();
+    const {currencies} = useDataCurrency();
     const isLoading = useSelector((state:any)=>state.isLoading.loading);
     const theme= useSelector((state:any)=>state.theme.theme)
     const [searchData,setSearchData] = useState < Currency[] > ([]);
     const [searchValue,setSearchValue] = useState < String > ("")
     const [error,setError] = useState < Boolean > (false);
-    const searchRef = useRef < InputRef > (null);
-    const url : any = process.env.REACT_APP_BASE_URL;
+    const dark = theme ==="dark";
+    const currentDate = currencies[0]?.Date;
    
-    function diffColorChanger(params : number) {
-        if (params > 0) {
-            return "red"
-
-        } else if (params === 0) {
-            return "cyan"
-        } else 
-            return "green"
-    }
-    function diffIconChanger(params : number) {
-        if (params > 0) {
-            return false
-        } else 
-            return true
-    }
-
-
     useEffect(() => {
         if (searchData.length) {
-            setData(searchData)
+            setData(searchData);
         } else 
             setData(currencies)
           
-
     }, [currencies, searchValue]);
 
-    function handleSearchInput() {
-        if (searchRef.current) {
-            const searchValue : any = searchRef.current.input
-                ?.value
+    function handleSearchInput(e:any) {
+            const searchValue : any = e.target.value
             setSearchValue(searchValue)
             const foundData = currencies.filter((el) => {
-
                 const searchRegExp = new RegExp(searchValue, "gi");
                 const searchText = `${el.CcyNm_UZ}`;
                 return searchText.match(searchRegExp);
 
             })
             setSearchData(foundData);
-        }
     }
-    
-  
-    
+   
     if (error) {
         return(<Result 
             status="404"
@@ -96,29 +67,18 @@ const TableSection : React.FC = () => {
     else
     return (
         <div>
-            <Skeleton loading={isLoading} active>
                 <div className="table-head">
-                    <Input
-                        type='text' 
-                        onChange={handleSearchInput}
-                        ref={searchRef}
-                        style={{
-                        width: "30rem", 
-                        // outlineColor:"#0E1418",
-                        borderRadius:"100px"
-                        
-                    }}  
-                        className={theme=="dark"?"table-search-input table-search-input--dark":" table-search-input table-search-input--light"}
-                        size="large"
-                        
-                        placeholder="Qidirish"
-                        prefix={< FiSearch color = '#838383' style = {{width:"2rem", height:"2rem"}}/>}/>
-                    
+                    <div className={`table-input-group ${dark?"table-input-group--dark":"table-input-group--light"}`}>
+                         <input className='table-search-input' placeholder='Valyuta qidirish' type="text" onChange={handleSearchInput} />
+                    </div>
+                    <div className={`table-date ${dark?"table-date--dark":"table-date--light"}`}>Oxirgi yangilanish: {`${isLoading?"--:--":`${formatDateTime(currentDate)}`}`}</div>
                 </div>
-                 
+                 <Skeleton loading={isLoading} active>
+                 <ul className="table-list">
+                   {data.map(element=><TableItem key={element.key} Rate={element.Rate} Buy={element.Buy} Sale={element.Sale} CcyNm_UZ={element.CcyNm_UZ} Diff={element.Diff} Ccy={element.Ccy}/>)}
+                 </ul>
                 </Skeleton>
-
-            </div>
+    </div>
     )
 }
 export default TableSection

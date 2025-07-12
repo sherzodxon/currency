@@ -12,8 +12,8 @@ interface Currency {
     Date : string;
     Ccy : string;
     Diff : string;
-    Sale:number;
-    Buy:number;
+    Sale : number;
+    Buy : number;
 }
 interface ExchangeRate {
     alpha3 : string;
@@ -34,10 +34,8 @@ interface CurrencyProviderProps {
 }
 
 const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
-    const [currencies,
-        setCurrencies] = useState < Currency[] > ([]);
-    const [saleDate,
-        setSaleDate] = useState < ExchangeRate[] > ([]);
+    const [currencies, setCurrencies] = useState < Currency[] > ([]);
+    const [saleDate,setSaleDate] = useState < ExchangeRate[] > ([]);
     const preferredTheme = useMediaPredicate("(prefers-color-scheme:dark)")
         ? "dark"
         : "light";
@@ -50,50 +48,53 @@ const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
     useEffect(() => {
         dispatch(changeTheme(preferredTheme))
     }, [preferredTheme]);
-
+    
+    const selectDataRateParam = (data:any,currencyElement:any)=> {
+      return data?.find((element : any) => element.alpha3 == currencyElement);
+    }
     useEffect(() => {
-        // const fetchRates = async() => {
-        //     try {
-        //         const response = await fetch('https://agrobank.uz/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates');
 
-        //         if (!response.ok) {
-        //             setError(true)
-        //         }
-        //         const data = await response.json();
-        //         setSaleDate(data.data
-        //             ?.sections[0]
-        //                 ?.blocks[2]
-        //                     ?.content
-        //                         ?.items);
+        const fetchLocalRates =async()=>{
+          try {
+            await fetch('/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates').then((res) => res.json()).then((json) => {
+            setSaleDate(json
+                ?.data
+                    ?.sections[0]
+                        ?.blocks[2]
+                            ?.content
+                                ?.items);
 
-        //     } catch (error) {
-        //         setError(true)
-        //     }
-        // }
-        
-    const fetchRates = async () => {
-        try {
-            const response = await fetch('/api/exchange'); // ❗ Vercel function manzili
-            if (!response.ok) {
-                setError(true);
-                return;
-            }
-
-            const data = await response.json();
-            setSaleDate(
-                data?.data
-                    ?.sections?.[0]
-                    ?.blocks?.[2]
-                    ?.content?.items
-            );
-            console.log(saleDate);
-            
-        } catch (error) {
-            setError(true);
+        })
+          } catch (error) {
+            setError(true)
+          }
         }
-    };
-     
-        fetchRates();
+
+        const fetchRates = async() => {
+            try {
+                const response = await fetch('/api/exchange');
+
+                if (!response.ok) {
+                    setError(true);
+                    return;
+                }
+
+                const data = await response.json();
+                setSaleDate(data
+                    ?.data
+                        ?.sections
+                            ?.[0]
+                                ?.blocks
+                                    ?.[2]
+                                        ?.content
+                                            ?.items);
+                
+            } catch (error) {
+                setError(true);
+            }
+        };
+        fetchLocalRates();
+       // fetchRates();
     }, [])
     useEffect(() => {
         const fetchCurrencies = async() => {
@@ -101,23 +102,20 @@ const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
                 const response = await fetch(url);
                 if (!response.ok) {
                     setError(true)
-                }
-                else if(saleDate.length){
-                  const data = await response.json();
-                const mappedCurrencies = data.map((currency : any) => ({
-                    key: currency.id,
-                    CcyNm_UZ: currency.CcyNm_UZ,
-                    Rate: currency.Rate,
-                    Date: currency.Date,
-                    Ccy: currency.Ccy,
-                    Diff: currency.Diff,
-                    Sale:saleDate?.find((element:any)=>element.alpha3==currency.Ccy)?.sale,
-                    Buy:saleDate?.find((element:any)=>element.alpha3==currency.Ccy)?.buy,
-
-                }))as Currency[];
-                setCurrencies(mappedCurrencies)
-                console.log(currencies);
-                dispatch(setLoading(false))
+                } else if (saleDate.length) {
+                    const data = await response.json();
+                    const mappedCurrencies = data.map((currency : any) => ({
+                        key: currency.id,
+                        CcyNm_UZ: currency.CcyNm_UZ,
+                        Rate: +currency.Rate,
+                        Date: selectDataRateParam(saleDate,currency.Ccy)?.updated,
+                        Ccy: currency.Ccy,
+                        Diff: +currency.Diff,
+                        Sale: Number(selectDataRateParam(saleDate,currency.Ccy)?.sale || currency.Rate),
+                        Buy: Number(selectDataRateParam(saleDate,currency.Ccy)?.buy || currency.Rate)
+                    }))as Currency[];
+                    setCurrencies(mappedCurrencies);
+                    dispatch(setLoading(false))
                 }
             } catch (error) {
                 setError(true)

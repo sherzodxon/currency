@@ -30,3 +30,21 @@ export function convertToDDMMYY(dateString:string) {
 
   return `20${year}-${month}-${day}`;
 }
+export function formatDateTime(datetimeStr:string) {
+  // Kiruvchi sana: 2025-07-11T11:49:07+0500
+  const date = new Date(datetimeStr);
+
+  // Elementlarni ajratib olish
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // 0-based
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  // Format: DD.MM.YYYY HH:mm
+  return `${day}.${month}.${year} , ${hours}:${minutes}`;
+}
+
+// Misol
+const input = "2025-07-11T11:49:07+0500";
+console.log(formatDateTime(input)); // 11.07.2025 11:49
