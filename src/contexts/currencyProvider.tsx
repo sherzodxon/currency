@@ -120,26 +120,11 @@ const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
             } catch (error) {
                 setError(true)
             }
-
-            const getcharts = async(code : string = "USD") => {
-                const allData : any[] = [];
-                for (let index = 1; index <= 12; index++) {
-                    const response = await fetch(`${url}${code}/2024-${index}-01/`);
-                    const data = await response.json();
-                    const mappedData = data.map((currency : any) => ({
-                        rate :+ currency.Rate,
-                        month: getMonthName(index)
-                    }))
-                    allData.push(...mappedData)
-                }
-                //  dispatch(setCurrency(allData))
-            }
-            //getcharts();
         };
 
         fetchCurrencies();
     }, [saleDate])
-
+      
     return (
         <DataCurrency.Provider
             value={{

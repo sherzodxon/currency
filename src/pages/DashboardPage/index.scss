@@ -1,0 +1,40 @@
+.dashboard-head{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+}
+.dashboard{
+    color: #212537;
+}
+.dashboard--dark{
+    color: #D3D7E0 !important;
+}
+
+.dashboard-rate{
+    font-size: 36px;
+    font-weight: 500;
+}
+.dashboard-diff--up{
+    color: #00C853 !important;
+   
+}
+.dashboard-diff{
+    margin-left: 15px;
+    color: #FF2C55;
+     font-size: 15px;
+     font-weight: 400;
+     text-align: center;
+     
+}
+.arrow-down{
+    transform: rotate(90deg);
+    margin-right: 5px;
+}
+.arrow-up{
+    // padding-top: 2px;
+    margin-right: 5px;
+}
+.dashboard-info{
+    font-size: 16px;
+    margin-bottom: 20px;
+}
