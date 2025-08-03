@@ -7,9 +7,11 @@
     overflow-y: auto;
     position: absolute;
     border-radius: 10px;
-    background-color: rgb(192, 192, 192,0.6) ;
+    background: rgb(192, 192, 192,0.1);
     color: #212537;
     box-shadow: 0 10px 40px -1px rgba(55,63,104,.9);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 5px 0;
     &::-webkit-scrollbar-track {
         border-radius: 10px;
@@ -25,17 +27,17 @@
         background-color: #fff;
     }
 }
-.sort-list--dark{
+.sort-list--dark {
     background-color: rgba(61, 67, 92,0.6);
     color: #fff;
 }
 .sort-list--closed {
     display: none;
 }
-.sort-item{
+.sort-item {
     border-bottom: 1px solid rgba(100,113,150,.5);
 }
-.sort-item-img{
+.sort-item-img {
     object-fit: cover;
     border-radius: 8px;
     border: 1px solid #fff;
@@ -43,22 +45,21 @@
 .sort-option-label {
     display: flex;
     justify-content: space-between;
-  margin-bottom: 10px;
+    margin-bottom: 10px;
     font-size: 16px;
     cursor: pointer;
-    padding: 12px;
-    padding-bottom: 2px;
+    padding: 12px 12px 2px;
 }
 .sort-option-tick {
     display: inline-block;
     width: 20px;
     height: 20px;
- 
+
 }
 .sort-option-radio:checked + .sort-option-tick {
-    background: url(../../image/check.svg) no-repeat center center;
+    background: url("../../image/check.svg") no-repeat center center;
 }
-.sort-button{
+.sort-button {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -70,16 +71,16 @@
     padding: 8px 12px;
     cursor: pointer;
 }
-.sort-button--dark{
+.sort-button--dark {
     color: #fff;
 }
-.sort-button-span{
+.sort-button-span {
     width: 20px;
     height: 20px;
     transition: 200ms;
 }
-.sort-button--open{
-    .sort-button-span{
+.sort-button--open {
+    .sort-button-span {
         transform: rotate(90deg);
         //transition: 200ms;
     }

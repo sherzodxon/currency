@@ -1,88 +1,128 @@
-import {Button, Form, Input, Select} from "antd";
-import {DataCurrency, useDataCurrency} from "../../contexts/currencyProvider";
-import {useEffect, useState} from "react";
-import {getFirstTwoLetters} from "../../functions";
+// CurrencyConverter.tsx
+import React, {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
-import './index.scss'
+import {getFirstTwoLetters} from "../../functions";
+import {useDataCurrency, DataCurrency} from "../../contexts/currencyProvider";
+import Sort from "../../assets/components/Sort";
+import ChevronRight from "../../assets/image/ChevronRight";
+import "./index.scss";
 
-type TransactionPageProps = {}
 interface Currency {
-    key : number;
-    CcyNm_UZ : string;
     Rate : number;
-    Date : string;
     Ccy : string;
-    Diff : string;
 }
-interface CurrencyOption {
-    value : string;
-    label : JSX.Element;
-}
-const TransactionPage : React.FC < TransactionPageProps > = () => {
+
+const CurrencyConverter : React.FC = () => {
     const {currencies} = useDataCurrency();
     const theme = useSelector((state : any) => state.theme.theme);
-    const [value,
-        setValue] = useState < CurrencyOption[] > ([]);
+    const dark = theme === "dark";
+
+    const [firstCurrency,setFirstCurrency] = useState < Currency > ({Ccy: "USD", Rate: 12200});
+    const [secondCurrency,setSecondCurrency] = useState < Currency > ({Ccy: "UZS", Rate: 1});
+
+    const [firstValue,setFirstValue] = useState < number > (1);
+    const [secondValue,setSecondValue] = useState < number > (1);
+
+    const [firstOpen,setFirstOpen] = useState < boolean > (false);
+    const [secondOpen,setSecondOpen] = useState < boolean > (false);
+
+    const [activeInput,setActiveInput] = useState < "first" | "second" > ("first");
+
+    const firstRef = useRef < HTMLInputElement > (null);
+    const secondRef = useRef < HTMLInputElement > (null);
+    
+    useEffect(()=>{
+        const defaultCurrencyRate = currencies.find((el:any)=>el.Ccy == "USD")
+       if (defaultCurrencyRate?.Rate) {
+        setFirstCurrency({Ccy:"USD",Rate:defaultCurrencyRate.Rate} as Currency)
+       }
+        
+    },[currencies])
+
     useEffect(() => {
-        setValue(currencies.map((el : any) => ({value: el.Ccy, label: (
-                <div className="transaction-option-wrapper">
-                    <img
-                        src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${getFirstTwoLetters(el.Ccy)}.svg`}
-                        className='transaction-option-flag' width={20} height={20}/>
-                    <p className='option-item'>{el.Ccy}</p>
+        const convert = () => {
+            const rateA = firstCurrency.Rate;
+            const rateB = secondCurrency.Rate;
+
+            if (activeInput === "first") {
+                const result = (firstValue * rateA) / rateB;
+                setSecondValue(parseFloat(result.toFixed(4)));
+            } else {
+                const result = (secondValue * rateB) / rateA;
+                setFirstValue(parseFloat(result.toFixed(4)));
+            }
+        };
+
+        convert();
+    }, [firstCurrency, secondCurrency, firstValue, secondValue, activeInput]);
+
+    
+    const renderInputRow = (
+        value : number, 
+        ref : React.RefObject < HTMLInputElement >, 
+        open : boolean, onToggle : () => void, 
+        currency : Currency, setCurrency : React.Dispatch < React.SetStateAction < Currency >>, setValue : React.Dispatch < React.SetStateAction < number >>, 
+        source : "first" | "second") => 
+        {
+        const handleChange = (e : React.ChangeEvent < HTMLInputElement >) => {
+            setActiveInput(source);
+            setValue(+ e.target.value);
+        };
+
+        const handleOptionChange = (ccy : string) => {
+            const found = currencies.find((c) => c.Ccy === ccy);
+            if (found) 
+                setCurrency(found);
+            };
+        
+        return (
+            <div className="converter-row">
+                <input
+                    ref={ref}
+                    type="number"
+                    value={value}
+                    onChange={handleChange}
+                    className="converter-number-input"
+                    min={0}
+                    inputMode="decimal"/>
+                <div className="converter-sort-wrapper">
+                    <button
+                        className={`sort-button ${dark? "sort-button--dark": ""} ${open? "sort-button--open":""}`}
+                        onClick={onToggle}>
+                        <img
+                            src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${getFirstTwoLetters(currency.Ccy)}.svg`}
+                            alt="flag"
+                            width="25"
+                            height="25"
+                            className="sort-item-img"/> {currency.Ccy}
+                        <span className="sort-button-span">
+                            <ChevronRight/>
+                        </span>
+                    </button>
+                    <Sort
+                        handleOptionChange={handleOptionChange}
+                        options={currencies}
+                        open={open}
+                        defaultValue={currency.Ccy}
+                        name={`sort-${source}`}
+                        close={() => (ref === firstRef? setFirstOpen(false): setSecondOpen(false))}/>
                 </div>
-            )})))
-    }, [currencies])
-    //  const usdData = currencies.find(el=>el.Ccy == "USD") const first =
-    // usdData?.Rate?usdData.Rate:0; const second = eurData?.Rate?eurData.Rate:0;
-    // const result = first / second console.log(result);
-
-    const onChange = (value : string) => {
-        const findedData = currencies.find((el) => el.Ccy == value);
-        console.log(findedData);
+            </div>
+        );
     };
-    const onFinish = (values : any) => {
-        console.log(values);
-
-    }
 
     return (
-        <div>
-            <Form onFinish={onFinish}>
-                <div className="transaction-input-row">
-                     <Form.Item name="firstValue">
-                    <Input type="number" size="large"  className={theme == "dark"
-                        ? "transaction-code table-search-input--dark"
-                        : "transaction-code table-search-input--light"} placeholder="0"/>
-                </Form.Item>
-                <Form.Item name="firstCurrency" >
-                    <Select
-                        onChange={onChange}
-                        options={value}
-                        // colorBgContainer={theme=='dark'?"#000":"#fff"}
-                       placeholder={( <img
-                        src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/US.svg`}
-                        className='transaction-option-flag' width={20} height={20}/>)}
-                        style={{
-                            borderRadius:"100px",
-                        textTransform: 'uppercase'
-                    }}/>
-                </Form.Item>
-                </div>
-                <Form.Item>
-                    <Button
-                        size='large'
-                        className='table-form-button'
-                        type="primary"
-                        style={{
-                        borderRadius: "100px"
-                    }}
-                        htmlType="submit">Yuborish
-                    </Button>
-                </Form.Item>
-            </Form>
+        <div
+            className={`converter ${dark? "converter--dark": "converter--light"}`}>
+            <h2 className="converter-title">Bank valyuta konvertori</h2>
+            <div className="converter-wrapper">
+                {renderInputRow(firstValue, firstRef, firstOpen, () => setFirstOpen(!firstOpen), firstCurrency, setFirstCurrency, setFirstValue, "first")}
+
+                {renderInputRow(secondValue, secondRef, secondOpen, () => setSecondOpen(!secondOpen), secondCurrency, setSecondCurrency, setSecondValue, "second")}
+
+            </div>
         </div>
     );
-}
+};
 
-export default TransactionPage;
+export default CurrencyConverter;

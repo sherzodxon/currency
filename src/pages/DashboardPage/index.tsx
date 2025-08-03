@@ -46,7 +46,7 @@ const DashboardPage : React.FC = () => {
     const theme = useSelector((state : any) => state.theme.theme);
     const {currencies} = useDataCurrency();
     const [defaultChecked, setDefaultChecked] = useState < Currency > ({key: 69, Ccy: "USD",CcyNm_UZ:"AQSh dollari",Rate:12200,Diff:"12"});
-    const [sortOpen,setSortOpen] = useState < Boolean > (false)
+    const [sortOpen,setSortOpen] = useState < boolean > (false)
     const [chartData,setChartData] = useState < Chart[] > ([])
     const {minRate, maxRate} = findMinMaxRate(chartData);
     const dark = theme === "dark";
@@ -93,9 +93,8 @@ const DashboardPage : React.FC = () => {
     function handleSortClose() {
         setSortOpen(false)
     }
-    const handleOptionChange = (evt : any) => {
-        const sortValue = evt.target.value;
-        const findedSortData = currencies.find((element : any) => element.Ccy === sortValue);
+    const handleOptionChange = (ccy : string) => {
+        const findedSortData = currencies.find((element : any) => element.Ccy === ccy);
         setDefaultChecked(findedSortData as Currency);
        
     }
