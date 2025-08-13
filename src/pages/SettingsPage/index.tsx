@@ -1,8 +1,76 @@
-import {Button, DatePicker, Form, Input} from "antd";
 import {useSelector} from "react-redux";
-import {convertToDDMMYY} from "../../functions";
+import {convertToYYYYMMDD, getFirstTwoLetters} from "../../functions";
 import {useEffect, useState} from "react";
+import {useDataCurrency} from "../../contexts/currencyProvider";
+import Sort from "../../assets/components/Sort";
+import ChevronRight from "../../assets/image/ChevronRight";
+import Flatpickr from 'react-flatpickr';
+import 'flatpickr/dist/themes/material_green.css';
+import './index.scss';
+import {CustomLocale} from 'flatpickr/dist/types/locale';
+import { setTimeout } from "timers/promises";
 import HistoryTable from "../../assets/components/HistoryTable";
+
+const Uzbek : CustomLocale = {
+    weekdays: {
+        shorthand: [
+            'Yak',
+            'Du',
+            'Se',
+            'Ch',
+            'Pa',
+            'Ju',
+            'Sh'
+        ],
+        longhand: [
+            'Yakshanba',
+            'Dushanba',
+            'Seshanba',
+            'Chorshanba',
+            'Payshanba',
+            'Juma',
+            'Shanba'
+        ]
+    },
+
+    months: {
+        shorthand: [
+            'Yan',
+            'Fev',
+            'Mar',
+            'Apr',
+            'May',
+            'Iyn',
+            'Iyl',
+            'Avg',
+            'Sen',
+            'Okt',
+            'Noy',
+            'Dek'
+        ],
+        longhand: [
+            'Yanvar',
+            'Fevral',
+            'Mart',
+            'Aprel',
+            'May',
+            'Iyun',
+            'Iyul',
+            'Avgust',
+            'Sentabr',
+            'Oktabr',
+            'Noyabr',
+            'Dekabr'
+        ]
+    },
+
+    firstDayOfWeek: 1,
+    rangeSeparator: ' dan ',
+    weekAbbreviation: 'Hafta',
+    scrollTitle: 'Kattalashtirish uchun aylantiring',
+    toggleTitle: 'Ochish / Yopish',
+    time_24hr: true
+};
 
 interface Currency {
     key : number;
@@ -13,34 +81,54 @@ interface Currency {
     Diff : string;
 }
 interface HistoryItem {
-    date : string;
+    date : string ;
     data : Currency[];
 }
 type SettingsPageProps = {}
 
 const SettingsPage : React.FC < SettingsPageProps > = () => {
     const theme = useSelector((state : any) => state.theme.theme);
-
+    const dark = theme === "dark";
     const url : any = process.env.REACT_APP_BASE_URL;
-    type FieldType = {
-        code?: string;
-        date?: string;
-    };
+    const [code,setCode] = useState < string > ("USD");
+    const [date,setDate] = useState < Date []> ([]);
+    const [sortOpen,setSortOpen] = useState < boolean > (false);
+    const [sortDisabled,setSortDisabled] = useState < boolean > (false);
+    const [buttonDisabled,setButtonDisabled] = useState <boolean>(true)
+    const [isLoading,setLoading] = useState < boolean > (false);
+    const {currencies} = useDataCurrency();
     const historyDataString = JSON.parse(localStorage.getItem('history') || '[]');
-
-    const [historyData,
-        setHistoryData] = useState < HistoryItem[] > (historyDataString);
-
-    const onFinish = async(values : any) => {
+    const [historyData,setHistoryData] = useState < HistoryItem[] > (historyDataString);
+    function handleSortOpen() {
+        setSortOpen(!sortOpen)
+    }
+    function handleSortClose() {
+        setSortOpen(false)
+    }
+    const handleOptionChange = (ccy : string) => {
+        const findedSortData = currencies.find((element : any) => element.Ccy === ccy);
+        if (findedSortData) {
+            setCode(findedSortData.Ccy)
+        }
+    }
+    const handleDisableChecked = (evt : any) => {
+        const value = evt.target.checked
+        setSortDisabled(value);
+        if (sortOpen && value) {
+            setSortOpen(false)
+        }
+    }
+    const onFinish = async() => {
         try {
-            const response = values.code
-                ? await fetch(`${url}${values.code}/${convertToDDMMYY(values.date)}/`)
-                : await fetch(`${url}all/${convertToDDMMYY(values.date)}/`);
+            const response = sortDisabled
+                ? await fetch(`${url}all/${convertToYYYYMMDD(date)}/`)
+                : await fetch(`${url}${code}/${convertToYYYYMMDD(date)}/`);
+                
             if (!response.ok) {
-                //console.log(error);
-
+                console.log("error");
+                
             }
-            // setLoading(true)
+            setLoading(true)
             const data = await response.json();
             const historyCurrency = data.map((currency : any) => ({
                 key: currency.id,
@@ -52,17 +140,14 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
 
             }))as Currency[];
 
-            // setLoading(false)
-
+            setLoading(false)
+             
             const history : HistoryItem = {
-                date: convertToDDMMYY(values.date),
+                date: date.toLocaleString().split(',')[0],
                 data: historyCurrency
             }
-            setHistoryData((prevHistoryData) => [
-                ...prevHistoryData,
-                history
-            ]);
-
+            setHistoryData((prevHistoryData) => [...prevHistoryData,     history ]);
+          
         } catch (error) {
             //setError(true)
         }
@@ -70,52 +155,83 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
     useEffect(() => {
         localStorage.setItem('history', JSON.stringify(historyData || []))
     }, [historyData])
-   console.log(historyData);
-   
+    function handleDateChange(params:Date[]) {
+        setDate(params)
+        setButtonDisabled(false)
+    }
     return (
-        <div>
-            <Form onFinish={onFinish} className="table-history-wrapper">
-                <Form.Item<FieldType>
-                    name="code">
-                    <Input
-                        className={theme == "dark"
-                        ? "table-form-code table-search-input--dark"
-                        : "table-form-code table-search-input--light"}
-                        size="large"
-                        style={{
-                        textTransform: 'uppercase'
-                    }}
-                        type='text'
-                        placeholder='USD'
-                        maxLength={3}/>
-                </Form.Item>
-                <Form.Item<FieldType>
-                    name="date" rules={[{
-                            required: true,
-                            message: 'Iltimos vaqtni kiriting!'
-                        }
-                    ]}>
-                    <DatePicker
-                        className={theme == "dark"
-                        ? "table-form-date table-search-input--dark"
-                        : "table-form-date table-search-input--light"}
-                        placeholder='Sana'
-                        size='large'/>
-                </Form.Item>
-                <Form.Item>
-                    <Button
-                        size='large'
-                        className='table-form-button'
-                        type="primary"
-                        style={{
-                        borderRadius: "100px"
-                    }}
-                        htmlType="submit">Yuborish
-                    </Button>
-                </Form.Item>
-            </Form>
+        <div className="history">
+            <div className="history-head">
+                <div className="history-checkbox-wrapper">
+                    <input
+                        className="visually-hidden"
+                        type="checkbox"
+                        onChange={handleDisableChecked}
+                        name="check"
+                        id="allSelector"/>
+                    <label
+                        className={`history-label ${dark
+                        ? "history-label--dark"
+                        : ""}`}htmlFor="allSelector">
+                        <span className="history-label-text">Barcha valyutalar</span>
+                        <span className="history-label-tick">
+                            <span className="history-all-selected"></span>
+                        </span>
+                    </label>
+
+                </div>
+                <div className="history-sort-wrapper">
+                    <button
+                        className={`${dark
+                        ? "sort-button sort-button--dark"
+                        : "sort-button"} ${sortOpen
+                            ? "sort-button--open"
+                            : ""}`}
+                        onClick={handleSortOpen}
+                        disabled={sortDisabled}>
+                        <img
+                            src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${getFirstTwoLetters(code)}.svg`}
+                            alt="flag"
+                            width="25"
+                            height="25"
+                            className="sort-item-img"/> {code}
+                        <span className="sort-button-span"><ChevronRight/></span>
+                    </button>
+                    <Sort
+                        handleOptionChange={handleOptionChange}
+                        options={currencies}
+                        open={sortOpen}
+                        defaultValue={"USD"}
+                        name="history-sort"
+                        close={handleSortClose}/>
+                </div>
+                <div className="history-date-wrapper">
+                    <Flatpickr
+                        className={`history-date ${dark
+                        ? "history-date--dark"
+                        : ""}`}
+                        placeholder="Sanani tanlang..."
+                        value={convertToYYYYMMDD(date)}
+                        onChange={handleDateChange}
+                        options={{
+                        locale: Uzbek,
+                        dateFormat: "Y-m-d",
+                        maxDate: "today"
+                    }}/>
+                </div>
+                <button
+                    disabled={buttonDisabled}
+                    onClick={onFinish}
+                    className={`history-button ${isLoading
+                    ? "history-button--loading"
+                    : ""}`}>
+                    <span className="history-button-text">Qabul qilish</span>
+                    <span className="history-loader"></span>
+                </button>
+            </div>
             <HistoryTable data={historyData}/>
         </div>
+
     )
 }
 export default SettingsPage

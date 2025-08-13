@@ -10,7 +10,7 @@
     padding: 10px;
     display: none;
     box-shadow: 1px 1px 10px 1px #94ADEC;
-    max-height: 300px;
+    max-height: 700px;
     overflow-y: scroll;
     &::-webkit-scrollbar-track
     {
@@ -40,12 +40,12 @@
    .history-container{
     display: block;
    }
-   .history-label{
+   .history-table-label{
     color: yellowgreen !important;
    }
 }
-.history-label{
+.history-table-label{
     font-size: 30px;
     cursor: pointer;
-    padding-bottom: 20px;
+   
 }

@@ -26,6 +26,7 @@
         border-radius: 10px;
         background-color: #fff;
     }
+
 }
 .sort-list--dark {
     background-color: rgba(61, 67, 92,0.6);
@@ -70,6 +71,10 @@
     border: none;
     padding: 8px 12px;
     cursor: pointer;
+    &:disabled{
+        opacity: 0.5;
+        cursor:no-drop;
+    }
 }
 .sort-button--dark {
     color: #fff;

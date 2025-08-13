@@ -38,14 +38,27 @@ export function getFirstTwoLetters(word : string) {
         return 'Input must be a three-letter word';
     }
 }
-export function convertToDDMMYY(dateString : string) {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-    const year = String(date.getFullYear()).slice(2); // Get last two digits of year
+export function convertToYYYYMMDD(date: Date | Date[] | null | undefined): string | string[] {
+  const format = (d: Date) => {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
-    return `20${year}-${month}-${day}`;
+  if (!date) {
+    return Array.isArray(date) ? [] : "";
+  }
+
+  if (Array.isArray(date)) {
+    return date.map(d => format(d));
+  }
+
+  return format(date);
 }
+
+
+
 export function formatDateTime(datetimeStr : string) {
     const date = new Date(datetimeStr);
     const day = String(date.getDate()).padStart(2, '0');

@@ -3,6 +3,7 @@ import { ColumnsType } from "antd/es/table";
 import { getFirstTwoLetters } from "../../../functions";
 import './index.scss'
 import { useSelector } from "react-redux";
+import TableItem from "../TableItem";
 type HistoryTableProps = {data:Array<any>}
  
 interface Currency {
@@ -15,30 +16,7 @@ interface Currency {
   }
 const HistoryTable:React.FC<HistoryTableProps> = ({data}) => {
     const theme= useSelector((state:any)=>state.theme.theme)
-    const columns : ColumnsType < Currency > = [
-        {
-            dataIndex: 'CcyNm_UZ',
-            key: 'name',
-        }, 
-        {
-            dataIndex: 'Ccy',
-            key: 'code',
-            render:(ccy)=>(
-                <div className='table-name-wrapper'>
-                    <div className='table-flag' style={{backgroundImage:`url('https://purecatamphetamine.github.io/country-flag-icons/3x2/${getFirstTwoLetters(ccy)}.svg')`}}></div>
-                    <p className='table-currency-name'>{ccy}</p>
-                   
-                </div>
-            )
-        }, {
-            dataIndex: 'Rate',
-            key: 'rate',
-        }, 
-        {
-            dataIndex: 'Date',
-            key: 'date'
-        }
-      ];  
+    
     return (
         <>
         {data.map((elements)=>
@@ -46,9 +24,14 @@ const HistoryTable:React.FC<HistoryTableProps> = ({data}) => {
            
              <input type="radio" className="history-input visually-hidden" name="checkbox" id={elements.date}/>
              <div className="history-wrapper">
-             <label style={{color:theme==="dark"?"#848484":"#111C42"}} htmlFor={elements.date} className="history-label">{elements.date}</label>
+             <label style={{color:theme==="dark"?"#848484":"#111C42"}} htmlFor={elements.date} className="history-table-label">{elements.date}</label>
              <div className="history-container">
-                <Table columns={columns} dataSource={elements.data} pagination={false}  className={theme==="dark"?"dark-table history-table":"light-table history-table"}/>
+               <ul className="history-list">
+                {
+                    elements.data.map((element:any)=><TableItem CcyNm_UZ={element.CcyNm_UZ} Buy={element.Rate} Ccy={element.Ccy} Sale={element.Rate} Diff={element.Diff} Rate={element.Rate}/>
+                    )
+                }
+               </ul>
              </div>
              </div>
              

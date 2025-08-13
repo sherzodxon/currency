@@ -5,6 +5,8 @@ html {
 *{
     transition: color 0.1s, background-color 0.4s;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
     margin: 0;
     padding: 0;
 }
@@ -23,11 +25,8 @@ body {
    
 }
 .container {
-    // border-radius: 40px;
-    // width: 100%;
     width: 100%;
     padding: 2rem 4rem;
-   // margin: 2rem;
     margin-bottom: 0;
     height: 100vh;
     overflow-y: scroll;
