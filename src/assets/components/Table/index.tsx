@@ -31,8 +31,8 @@ const TableSection : React.FC = () => {
     const theme= useSelector((state:any)=>state.theme.theme)
     const [searchData,setSearchData] = useState < Currency[] > ([]);
     const [searchValue,setSearchValue] = useState < String > ("")
-    const [error,setError] = useState < Boolean > (false);
-    const dark = theme ==="dark";
+    const error = useSelector((state:any)=>state.error.error)
+    const dark = theme === "dark";
     const currentDate = currencies[0]?.Date;
    
     useEffect(() => {
@@ -54,6 +54,7 @@ const TableSection : React.FC = () => {
             })
             setSearchData(foundData);
     }
+  
    
     if (error) {
         return(<Result 

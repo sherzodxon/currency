@@ -1,4 +1,4 @@
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {convertToYYYYMMDD, getFirstTwoLetters} from "../../functions";
 import {useEffect, useState} from "react";
 import {useDataCurrency} from "../../contexts/currencyProvider";
@@ -8,8 +8,9 @@ import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
 import './index.scss';
 import {CustomLocale} from 'flatpickr/dist/types/locale';
-import { setTimeout } from "timers/promises";
 import HistoryTable from "../../assets/components/HistoryTable";
+import { changeError } from "../../redux/errorSlice/errorSlice";
+import { Button, Result } from "antd";
 
 const Uzbek : CustomLocale = {
     weekdays: {
@@ -81,15 +82,16 @@ interface Currency {
     Diff : string;
 }
 interface HistoryItem {
+    id:number;
     date : string ;
     data : Currency[];
 }
-type SettingsPageProps = {}
+type HistoryPageProps = {}
 
-const SettingsPage : React.FC < SettingsPageProps > = () => {
+const HistoryPage : React.FC < HistoryPageProps > = () => {
     const theme = useSelector((state : any) => state.theme.theme);
     const dark = theme === "dark";
-    const url : any = process.env.REACT_APP_BASE_URL;
+    const url = process.env.REACT_APP_BASE_URL as string;
     const [code,setCode] = useState < string > ("USD");
     const [date,setDate] = useState < Date []> ([]);
     const [sortOpen,setSortOpen] = useState < boolean > (false);
@@ -99,6 +101,8 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
     const {currencies} = useDataCurrency();
     const historyDataString = JSON.parse(localStorage.getItem('history') || '[]');
     const [historyData,setHistoryData] = useState < HistoryItem[] > (historyDataString);
+    const error = useSelector((state:any)=>state.error.error);
+    const dispatch = useDispatch();
     function handleSortOpen() {
         setSortOpen(!sortOpen)
     }
@@ -143,13 +147,14 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
             setLoading(false)
              
             const history : HistoryItem = {
+                id:Math.round(Math.random()*1000),
                 date: date.toLocaleString().split(',')[0],
                 data: historyCurrency
             }
             setHistoryData((prevHistoryData) => [...prevHistoryData,     history ]);
           
         } catch (error) {
-            //setError(true)
+           dispatch(changeError(true))
         }
     };
     useEffect(() => {
@@ -158,6 +163,16 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
     function handleDateChange(params:Date[]) {
         setDate(params)
         setButtonDisabled(false)
+    }
+    if (error) {
+        return(<Result 
+                status="404"
+                title="404" 
+                subTitle="Iltimos! Qaytadan urinib ko'ring."
+                className="error-page"
+                extra={<Button 
+                onClick={()=>window.location.reload()} 
+                type="primary">Qayta boshlash</Button>}/>)
     }
     return (
         <div className="history">
@@ -234,4 +249,4 @@ const SettingsPage : React.FC < SettingsPageProps > = () => {
 
     )
 }
-export default SettingsPage
+export default HistoryPage

@@ -2,7 +2,7 @@
 import React, {useEffect, useRef, useState} from "react";
 import {useSelector} from "react-redux";
 import {getFirstTwoLetters} from "../../functions";
-import {useDataCurrency, DataCurrency} from "../../contexts/currencyProvider";
+import {useDataCurrency} from "../../contexts/currencyProvider";
 import Sort from "../../assets/components/Sort";
 import ChevronRight from "../../assets/image/ChevronRight";
 import "./index.scss";
@@ -32,7 +32,7 @@ const CurrencyConverter : React.FC = () => {
     const secondRef = useRef < HTMLInputElement > (null);
     
     useEffect(()=>{
-        const defaultCurrencyRate = currencies.find((el:any)=>el.Ccy == "USD")
+        const defaultCurrencyRate = currencies.find((el:any)=>el.Ccy === "USD")
        if (defaultCurrencyRate?.Rate) {
         setFirstCurrency({Ccy:"USD",Rate:defaultCurrencyRate.Rate} as Currency)
        }

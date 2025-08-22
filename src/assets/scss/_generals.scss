@@ -64,7 +64,15 @@ td {
     font-family: 'Poppins', sans-serif;
 }
 
-
+.ant-result-title{
+    color: rgba(255, 44, 85, 1) !important;
+    font-weight: 500;
+    font-size: 36px !important;
+}
+.ant-result-subtitle{
+    color: #867272 !important;
+    font-size: 18px !important;
+}
 .visually-hidden {
     position: absolute;
     width: 1px;

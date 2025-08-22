@@ -3,8 +3,9 @@
 import { ElementType } from "react";
 import DashboardIcon from "../../../assets/image/DashboardIcon";
 import HomeIcon from "../../../assets/image/HomeIcon";
-import SettingsIcon from "../../../assets/image/SettingsIcon";
 import TransactionIcon from "../../../assets/image/TransactionIcon";
+import HistoryIcon from "../../../assets/image/HistoryIcon";
+
 interface Sidebar {
     id : number,
     to : string,
@@ -16,29 +17,29 @@ export const sidebarRoutes:Sidebar[]=[
     {
         id:1,
         to:"/",
-        title:"Home",
+        title:"Asosiy",
         active:true,
         icon: HomeIcon
     },
     {
         id:2,
         to:"/dashboard",
-        title:"Dashboard",
+        title:"Grafik",
         active:false,
         icon:DashboardIcon
     },
     {
         id:3,
         to:"/transaction",
-        title:"Transaction",
+        title:"Tranzaksiya",
         active:false,
         icon:TransactionIcon,
     },
     {
         id:4,
         to:"/history",
-        title:"History",
+        title:"Arxiv",
         active:false,
-        icon:SettingsIcon
+        icon:HistoryIcon
     }
 ]

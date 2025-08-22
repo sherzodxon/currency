@@ -1,7 +1,7 @@
 import {ElementType} from "react";
 import HomePage from "./HomePage";
 import DashboardPage from "./DashboardPage";
-import SettingsPage from "./SettingsPage";
+import HistoryPage from "./HistoryPage";
 import TransactionPage from "./TransactionPage";
 interface Route {
     id : number,
@@ -27,6 +27,6 @@ export const routes : Route[] = [
     {
         id:4,
         path:"/history",
-        element:SettingsPage
+        element:HistoryPage
     }
 ]

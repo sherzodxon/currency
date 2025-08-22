@@ -1,147 +1,142 @@
-import React, {createContext, useContext, useState, ReactNode, useEffect} from 'react';
-import {useDispatch} from 'react-redux';
-import {setLoading} from '../redux/loadingSlice/loadingSlice';
-import {getMonthName} from '../functions';
-import {useMediaPredicate} from 'react-media-hook';
-import {changeTheme} from '../redux/themeSlice/themeSlice';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setLoading } from "../redux/loadingSlice/loadingSlice";
+import { useMediaPredicate } from "react-media-hook";
+import { changeTheme } from "../redux/themeSlice/themeSlice";
+import { changeError } from "../redux/errorSlice/errorSlice";
 
 interface Currency {
-    key : number;
-    CcyNm_UZ : string;
-    Rate : number;
-    Date : string;
-    Ccy : string;
-    Diff : string;
-    Sale : number;
-    Buy : number;
+  key: number;
+  CcyNm_UZ: string;
+  Rate: number;
+  Date: string;
+  Ccy: string;
+  Diff: string;
+  Sale: number;
+  Buy: number;
 }
+
 interface ExchangeRate {
-    alpha3 : string;
-    buy : number;
-    rate : number;
-    sale : number;
-    updated : string
+  alpha3: string;
+  buy: number;
+  rate: number;
+  sale: number;
+  updated: string;
 }
 
 interface DataCurrencyContextValue {
-    currencies : Currency[];
-    setCurrencies : React.Dispatch < React.SetStateAction < Currency[] >>;
+  currencies: Currency[];
+  setCurrencies: React.Dispatch<React.SetStateAction<Currency[]>>;
 }
-export const DataCurrency = createContext < DataCurrencyContextValue | undefined > (undefined);
+
+export const DataCurrency = createContext<DataCurrencyContextValue | undefined>(undefined);
 
 interface CurrencyProviderProps {
-    children : ReactNode;
+  children: ReactNode;
 }
 
-const CurrencyProvider : React.FC < CurrencyProviderProps > = ({children}) => {
-    const [currencies, setCurrencies] = useState < Currency[] > ([]);
-    const [saleDate,setSaleDate] = useState < ExchangeRate[] > ([]);
-    const preferredTheme = useMediaPredicate("(prefers-color-scheme:dark)")
-        ? "dark"
-        : "light";
+const CurrencyProvider: React.FC<CurrencyProviderProps> = ({ children }) => {
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [saleDate, setSaleDate] = useState<ExchangeRate[]>([]);
+  const preferredTheme = useMediaPredicate("(prefers-color-scheme: dark)") ? "dark" : "light";
+  const url = process.env.REACT_APP_BASE_URL as string;
+  const dispatch = useDispatch();
 
-    const [error,
-        setError] = useState < Boolean > (false);
-    const url : any = process.env.REACT_APP_BASE_URL;
-    const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(changeTheme(preferredTheme));
+  }, [preferredTheme, dispatch]);
 
-    useEffect(() => {
-        dispatch(changeTheme(preferredTheme))
-    }, [preferredTheme]);
-    
-    const selectDataRateParam = (data:any,currencyElement:any)=> {
-      return data?.find((element : any) => element.alpha3 == currencyElement);
-    }
-    useEffect(() => {
+  const selectDataRateParam = (data: ExchangeRate[], currencyCode: string) => {
+    return data?.find((element) => element.alpha3 === currencyCode);
+  };
 
-        const fetchLocalRates =async()=>{
+  useEffect(() => {
+    const fetchRates = async () => {
+      dispatch(setLoading(true));
+      try {
+        //  Avval LOCAL API chaqiramiz
+        let saleItems: ExchangeRate[] | null = null;
+
+        try {
+          const localRes = await fetch(
+            "/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates"
+          );
+          if (!localRes.ok) throw new Error("Local fetch failed");
+          const localJson = await localRes.json();
+          saleItems =
+            localJson?.data?.sections?.[0]?.blocks?.[2]?.content?.items ?? null;
+        } catch (err) {
+          console.warn("Local API ishlamadi, Vercel APIga o'tyapmiz...");
+        }
+
+        //  Agar local ishlamasa → VERCEL API
+        if (!saleItems) {
           try {
-            await fetch('/api/v1/?action=pages&code=uz%2Fperson%2Fexchange_rates').then((res) => res.json()).then((json) => {
-            setSaleDate(json
-                ?.data
-                    ?.sections[0]
-                        ?.blocks[2]
-                            ?.content
-                                ?.items);
-
-        })
-          } catch (error) {
-            setError(true)
+            const vercelRes = await fetch("/api/exchange");
+            if (!vercelRes.ok) throw new Error("Vercel fetch failed");
+            const vercelJson = await vercelRes.json();
+            saleItems =
+              vercelJson?.data?.sections?.[0]?.blocks?.[2]?.content?.items ?? null;
+          } catch (err) {
+            console.error("Vercel API ham ishlamadi");
           }
         }
 
-        const fetchRates = async() => {
-            try {
-                const response = await fetch('/api/exchange');
+        //  Agar ikkisi ham ishlamasa → error
+        if (!saleItems) {
+          dispatch(changeError(true))
+          return;
+        }
 
-                if (!response.ok) {
-                    setError(true);
-                    return;
-                }
+        setSaleDate(saleItems);
 
-                const data = await response.json();
-                setSaleDate(data
-                    ?.data
-                        ?.sections
-                            ?.[0]
-                                ?.blocks
-                                    ?.[2]
-                                        ?.content
-                                            ?.items);
-                
-            } catch (error) {
-                setError(true);
-            }
-        };
-        fetchLocalRates();
-       // fetchRates();
-    }, [])
-    useEffect(() => {
-        const fetchCurrencies = async() => {
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    setError(true)
-                } else if (saleDate.length) {
-                    const data = await response.json();
-                    const mappedCurrencies = data.map((currency : any) => ({
-                        key: currency.id,
-                        CcyNm_UZ: currency.CcyNm_UZ,
-                        Rate: +currency.Rate,
-                        Date: selectDataRateParam(saleDate,currency.Ccy)?.updated,
-                        Ccy: currency.Ccy,
-                        Diff: +currency.Diff,
-                        Sale: Number(selectDataRateParam(saleDate,currency.Ccy)?.sale || currency.Rate),
-                        Buy: Number(selectDataRateParam(saleDate,currency.Ccy)?.buy || currency.Rate)
-                    }))as Currency[];
-                    setCurrencies(mappedCurrencies);
-                    dispatch(setLoading(false))
-                }
-            } catch (error) {
-                setError(true)
-            }
-        };
+        // Currencies chaqiramiz
+        const res = await fetch(url);
+        if (!res.ok) {
+         dispatch(changeError(true))
+          return;
+        }
+        const data = await res.json();
 
-        fetchCurrencies();
-    }, [saleDate])
-      
-    return (
-        <DataCurrency.Provider
-            value={{
-            currencies,
-            setCurrencies
-        }}>
-            {children}
-        </DataCurrency.Provider>
-    );
+        const mappedCurrencies: Currency[] = data.map((currency: any) => ({
+          key: currency.id,
+          CcyNm_UZ: currency.CcyNm_UZ,
+          Rate: +currency.Rate,
+          Date: selectDataRateParam(saleItems!, currency.Ccy)?.updated,
+          Ccy: currency.Ccy,
+          Diff: currency.Diff,
+          Sale: Number(
+            selectDataRateParam(saleItems!, currency.Ccy)?.sale || currency.Rate
+          ),
+          Buy: Number(
+            selectDataRateParam(saleItems!, currency.Ccy)?.buy || currency.Rate
+          ),
+        }));
+
+        setCurrencies(mappedCurrencies);
+      } catch (err) {
+        dispatch(changeError(true))
+      } finally {
+        dispatch(setLoading(false));
+      }
+    };
+
+    fetchRates();
+  }, [url, dispatch]);
+
+  return (
+    <DataCurrency.Provider value={{ currencies, setCurrencies }}>
+      {children}
+    </DataCurrency.Provider>
+  );
 };
 
-export const useDataCurrency = () : DataCurrencyContextValue => {
-    const context = useContext(DataCurrency);
-    if (!context) {
-        throw new Error('useDataCurrency must be used within a CurrencyProvider');
-    }
-    return context;
+export const useDataCurrency = (): DataCurrencyContextValue => {
+  const context = useContext(DataCurrency);
+  if (!context) {
+    throw new Error("useDataCurrency must be used within a CurrencyProvider");
+  }
+  return context;
 };
 
 export default CurrencyProvider;
