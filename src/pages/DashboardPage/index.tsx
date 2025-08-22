@@ -132,7 +132,7 @@ const DashboardPage : React.FC = () => {
 
     }
 
-   if (!error) {
+   if (error) {
     return(
     <Result 
                 status="404"
