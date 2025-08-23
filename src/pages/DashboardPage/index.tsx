@@ -53,6 +53,18 @@ const DashboardPage : React.FC = () => {
     const error = useSelector((state:any)=>state.error.error);
     const dispatch = useDispatch();
     const dark = theme === "dark";
+    const [angleX, setAngleX] = useState<number>(0);
+    const [angleY, setAngleY] = useState<number>(0);
+    
+     const handleResize = () => {
+      if (window.innerWidth < 650) {
+        setAngleX(-90); 
+      } else if (window.innerWidth < 900) {
+        setAngleX(-45); 
+      } else {
+        setAngleX(0); 
+      }
+    };
     const getCharts = async(code : string = "USD") => {
         const allData : {
             id : number;
@@ -110,7 +122,10 @@ const DashboardPage : React.FC = () => {
             setDefaultChecked(usdData as Currency)
         }
     }, [currencies]);
-
+    useEffect(()=>{
+        handleResize(); // birinchi yuklanganda ishlaydi
+        window.addEventListener("resize", handleResize);
+    },[])
     useEffect(() => {
         showData(defaultChecked.Ccy)
     }, [defaultChecked])
@@ -159,15 +174,15 @@ const DashboardPage : React.FC = () => {
                         : {
                             display: "block"
                         }}><FormattedNumber value={defaultChecked.Rate}/>
-                        <span
+                       
+                    </p>
+                     <span
                             className={`${diffController(defaultChecked.Diff)
                             ? "dashboard-diff dashboard-diff--up"
                             : "dashboard-diff"}`}><ArrowUp
                             className={`${diffController(defaultChecked.Diff)
             ? "arrow-up"
             : "arrow-down"}`}/>{defaultChecked.Diff}</span>
-                    </p>
-
                 </div>
                 <div className="dashboard-sort-wrapper">
                     <button
@@ -194,9 +209,9 @@ const DashboardPage : React.FC = () => {
                         close={handleSortClose}/>
                 </div>
             </div>
-            <Skeleton loading={loading} active>
+                 <Skeleton loading={loading} active>
                 <p className="dashboard-info">{defaultChecked.CcyNm_UZ}ning bir yillik o'zgarishlari grafigi</p>
-                <ResponsiveContainer width="100%" aspect={3 / 1}>
+                    <ResponsiveContainer width="100%" aspect={2 / 1}>
                     <AreaChart
                         width={730}
                         height={250}
@@ -223,12 +238,12 @@ const DashboardPage : React.FC = () => {
                             stroke={`${dark
                             ? "#B8C1D7"
                             : "#525C6B"}`}
-                            strokeWidth={0}/>
+                            strokeWidth={0} angle={angleX}/>
                         <YAxis
                             domain={[roundToLowerHundred(minRate), roundToUpperHundred(maxRate)]}
                             stroke={`${dark
                             ? "#B8C1D7"
-                            : "#525C6B "}`}/>
+                            : "#525C6B "}`} />
                         <CartesianGrid
                             strokeDasharray="2 2"
                             className="chartGrid"
@@ -246,7 +261,6 @@ const DashboardPage : React.FC = () => {
                     </AreaChart>
                 </ResponsiveContainer>
             </Skeleton>
-
         </div>
     );
 }

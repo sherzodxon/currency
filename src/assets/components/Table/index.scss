@@ -24,6 +24,7 @@
     display: flex;
     align-items: center;
     margin-right: 30px;
+    width: 112px;
 }
 .table-item-body {
     display: flex;
@@ -67,9 +68,16 @@
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+    max-width: 80px;
+  
 }
-.table-item-diff-ccyuz {
+.table-item-ccyuz {
     font-size: 9px;
+     width: 8rem;
+    white-space: nowrap;    /* textni bitta qator qilish */
+    overflow: hidden;       /* sigmaganini yashirish */
+    text-overflow: ellipsis;
+   
 }
 .table-item-diff--up {
     color: #00C853;
@@ -84,6 +92,9 @@
         background-image: url("../../image/down.svg");
         background-repeat: no-repeat;
     }
+}
+.table-item-section{
+    width: 80px;
 }
 .table-item-section-name {
     font-size: 12px;
@@ -138,4 +149,53 @@
 }
 .table-date--light{
     color: #11171B;
+}
+@media only screen and (max-width:800px){
+.table-item{
+    flex-direction: column;
+}
+.table-item-head{
+    margin: 0;
+    margin-bottom: 10px;
+}
+.table-item-body{
+    max-width: 100%;
+}
+.table-item-diff-section{
+    max-width: 120px;
+    text-align: right;
+}
+.table-item-ccyuz{
+    width: 12rem;
+}
+.table-item-diff{
+    text-align: right;
+    margin-left: auto;
+}
+.table-item-section{
+    width: auto;
+}
+
+}
+@media only screen and (max-width:730px){
+.table-date{
+    span{
+        display: none;
+    }
+}
+}
+@media only screen and (max-width:500px){
+    .table-input-group{
+          padding: 6px 18px 6px 8px;
+          &::after{
+            width: 16px;
+            height: 16px;
+            background-size: cover;
+            top: 10px;
+
+          }
+    }
+    .table-search-input{
+        font-size: 14px;
+    }
 }

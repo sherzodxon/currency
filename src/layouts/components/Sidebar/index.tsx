@@ -49,8 +49,8 @@ const Sidebar:React.FC=() => {
         <div className="sidebar-head">
             <a href="/" className="sidebar-head-link">
             <Logo/>
-             <span style={{color:theme=="dark"?"#fff":"#111C42"}}>Valyuta</span>
             </a>
+           <button onClick={()=>handeButton(name)} className={`theme-button ${name}-button`}></button>
         </div>
         <ul className="sidebar-list">
             {
@@ -63,9 +63,6 @@ const Sidebar:React.FC=() => {
                 </li>
                 )
             }
-            <li className="sidebar-item">
-                <button onClick={()=>handeButton(name)} className={`theme-button ${name}-button`}></button>
-            </li>
         </ul>
        </section>
     );

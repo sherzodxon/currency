@@ -5,6 +5,9 @@
 }
 .sidebar-head{
     margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 .sidebar-head-link{
     display: flex;
@@ -59,8 +62,8 @@
     background-color: rgb(0, 0, 0,0.2);
     border-radius: 20px;
     margin-left: 20px;
-    position: absolute;
-    bottom: 25px;
+    position: relative;
+    
     &::after{
         position: absolute;
         width: 30px;
@@ -95,4 +98,42 @@
         background-image: url('../../../assets/image/settings.svg');
         background-color: #5a6277;
     }
+}
+
+@media only screen and (max-width:950px){
+    .sidebar{
+        padding: 1.5rem;
+    }
+}
+@media only screen and (max-width:850px){
+    .sidebar{
+        min-width: 200px;
+        display: flex;
+        flex-direction: column-reverse;
+    }
+    .sidebar-dark-link , .sidebar-dark-link--active, .sidebar-light-link,.sidebar-light-link--active{
+        padding: 8px 15px;
+    }
+    .sidebar-item-title{
+        margin-left: 12px;
+    }
+    .sidebar-head-link{
+        span{
+            display: none;
+        }
+    }
+    .sidebar-head{
+        margin-bottom: 0;
+        margin-top: 10px;
+    }
+    .sidebar-list{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+@media only screen and (max-width:530px){
+.sidebar-item-title{
+    display: none;
+}
 }

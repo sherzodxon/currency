@@ -72,7 +72,7 @@ const TableSection : React.FC = () => {
                     <div className={`table-input-group ${dark?"table-input-group--dark":"table-input-group--light"}`}>
                          <input className='table-search-input' placeholder='Valyuta qidirish' type="text" onChange={handleSearchInput} />
                     </div>
-                    <div className={`table-date ${dark?"table-date--dark":"table-date--light"}`}>Oxirgi yangilanish: {`${isLoading?"--:--":`${formatDateTime(currentDate)}`}`}</div>
+                    <div className={`table-date ${dark?"table-date--dark":"table-date--light"}`}><span>Oxirgi yangilanish:</span> {`${isLoading?"--:--":`${formatDateTime(currentDate)}`}`}</div>
                 </div>
                  <Skeleton loading={isLoading} active>
                  <ul className="table-list">
