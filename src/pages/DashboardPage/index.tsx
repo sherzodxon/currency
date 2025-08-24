@@ -7,7 +7,10 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    YAxis
+    YAxis,
+    LineChart,
+    Legend,
+    Line
 } from "recharts";
 import {
     findMinMaxRate,
@@ -146,7 +149,7 @@ const DashboardPage : React.FC = () => {
         setDefaultChecked(findedSortData as Currency);
 
     }
-
+    
    if (error) {
     return(
     <Result 
@@ -176,7 +179,7 @@ const DashboardPage : React.FC = () => {
                         }}><FormattedNumber value={defaultChecked.Rate}/>
                        
                     </p>
-                     <span
+                     <span  style={loading?{display:"none"}:{display:"block"}}
                             className={`${diffController(defaultChecked.Diff)
                             ? "dashboard-diff dashboard-diff--up"
                             : "dashboard-diff"}`}><ArrowUp
@@ -211,16 +214,17 @@ const DashboardPage : React.FC = () => {
             </div>
                  <Skeleton loading={loading} active>
                 <p className="dashboard-info">{defaultChecked.CcyNm_UZ}ning bir yillik o'zgarishlari grafigi</p>
-                    <ResponsiveContainer width="100%" aspect={2 / 1}>
+                 {
+                   window.innerWidth>650? <ResponsiveContainer width="100%" aspect={2 / 1}>
                     <AreaChart
-                        width={730}
+                        width={790}
                         height={250}
                         data={chartData}
                         margin={{
-                        top: 10,
-                        right: 30,
+                        top: 5,
+                        right: 0,
                         left: 0,
-                        bottom: 0
+                        bottom: 10
                     }}>
                         <defs>
                             <linearGradient id="rate" x1="0" y1="0" x2="0" y2="1">
@@ -259,7 +263,27 @@ const DashboardPage : React.FC = () => {
                             fill="url(#rate)"
                             strokeWidth={3}/>
                     </AreaChart>
-                </ResponsiveContainer>
+                </ResponsiveContainer>:
+                <ResponsiveContainer width="100%" height="100%" aspect={1/1}>
+                     <LineChart
+                        layout="vertical"
+                        data={chartData}
+                        margin={{
+                        top: 20,
+                        right: 0,
+                        left: 0,
+                        bottom: 5,
+                        }}
+                     >
+                          <CartesianGrid strokeDasharray="5 5" stroke="gray"/>
+                          <XAxis type="number" domain={[roundToLowerHundred(minRate), roundToUpperHundred(maxRate)]}/>
+                          <YAxis dataKey="month" type="category" />
+                         <Tooltip />
+                         {/* <Legend /> */}
+                         <Line dataKey="rate" stroke="#8884d8" />
+                        </LineChart>
+                 </ResponsiveContainer>
+                 }
             </Skeleton>
         </div>
     );
