@@ -17,7 +17,7 @@
 }
 .converter-wrapper {
     width: 90%;
-    margin: 25px auto;
+    margin: 55px auto;
     border-radius: 20px;
     padding: 20px 35px;
     box-shadow: 0 10px 40px -1px rgba(55,63,104,.5);
@@ -27,7 +27,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
-    padding: 20px 0 25px;
+    padding: 20px 0 35px;
     &:first-child {
         border-bottom: 1px solid white;
         position: relative;
@@ -52,6 +52,9 @@
             bottom: -15px;
         }
     }
+    &:nth-child(2){
+        margin-bottom: 0;
+    }
 }
 .converter-number-input {
     background-color: transparent;
@@ -64,4 +67,45 @@
     &:focus {
         outline: none;
     }
+}
+@media only screen and (max-width:650px){
+  .converter-number-input{
+    font-size: 35px;
+    max-width: 200px;
+  }
+  .converter-wrapper{
+    width: 100%;
+    padding: 10px 20px;
+  }
+  
+}
+@media only screen and (max-width:490px){
+  .converter-title{
+    font-size: 28px;
+  }
+  .converter-number-input{
+    font-size: 30px;
+  }
+}
+@media only screen and (max-width:415px){
+   .converter-number-input{
+    font-size: 25px;
+    max-width: 180px;
+   }
+   .converter-row{
+   &:first-child{
+     &::before{
+        width: 35px;
+        height: 35px;
+        bottom: - calc(35px / 2);
+    }
+    &::after{
+        width: 15px;
+        height: 15px;
+        bottom: - calc(15px / 2);
+        left: 10px;
+        background-size: cover;
+    }
+   }
+   }
 }

@@ -1,9 +1,13 @@
 .history-head {
     padding: 10px 0;
+    margin-bottom: 12px;
+    position: relative;
+
+}
+.history-drop {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
 }
 .history-label-tick {
     position: absolute;
@@ -112,18 +116,18 @@
 .history-label--dark {
     color: #D3D7E0;
 }
-.history-date-wrapper{
-position: relative;
-margin-right: 20px;
-   // padding-right: 25px;
-    &::after{
+.history-date-wrapper {
+    position: relative;
+    margin-right: 20px;
+    // padding-right: 25px;
+    &::after {
         position: absolute;
         width: 20px;
         height: 20px;
         content: '';
         right: 0;
         top: calc(50% - 10px);
-        background: url(../../assets/image/calendar.svg) no-repeat center center;
+        background: url("../../assets/image/calendar.svg") no-repeat center center;
         background-size: contain;
     }
 }
@@ -134,14 +138,14 @@ margin-right: 20px;
     padding: 6px 10px;
     color: #212537;
     font-size: 16px;
-    max-width: 180px;
+    max-width: 150px;
     text-align: center;
-    
+
 }
-.history-date--dark{
+.history-date--dark {
     color: #D3D7E0;
 }
-.history-button{
+.history-button {
     background: linear-gradient(to left,#2F80ED 0%,#2D83D9 12%,#249173 74%,#219653 93%);
     border: none;
     padding: 10px 22px;
@@ -155,56 +159,99 @@ margin-right: 20px;
     text-align: center;
     cursor: pointer;
 }
-.history-button--loading{
-   padding: 22px 50px;
-   cursor: no-drop;
-   .history-loader{
-    opacity: 1;
-   }
-   .history-button-text{
-    display: none;
-   }
-}
-.history-button{
-    &:disabled{
-        opacity: 0.5;
-        cursor:no-drop;
+.history-button--loading {
+    padding: 22px 50px;
+    cursor: no-drop;
+    .history-loader {
+        opacity: 1;
+    }
+    .history-button-text {
+        display: none;
     }
 }
-.history-loader, .history-loader:before, .history-loader:after {
-  border-radius: 50%;
-  width: 8px;
-  height:8px;
-  animation-fill-mode: both;
-  animation: bblFadInOut 1.2s infinite ease-in-out;
+.history-button {
+    flex-shrink: 0;
+    &:disabled {
+        opacity: 0.5;
+        cursor: no-drop;
+    }
+}
+.history-loader,
+.history-loader:after,
+.history-loader:before {
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+    animation-fill-mode: both;
+    animation: bblFadInOut 1.2s infinite ease-in-out;
 }
 .history-loader {
-  color: #FFF;
-  font-size: 10px;
-  position: absolute;
-  transform: translateZ(0);
-  animation-delay: -0.16s;
-  top: -8px;
-  right: 65px;
-  opacity: 0;
-  
+    color: #FFF;
+    font-size: 10px;
+    position: absolute;
+    transform: translateZ(0);
+    animation-delay: -0.16s;
+    top: -8px;
+    right: 65px;
+    opacity: 0;
+
 }
-.history-loader:before,
-.history-loader:after {
-  content: '';
-  position: absolute;
-  
+.history-loader:after,
+.history-loader:before {
+    content: '';
+    position: absolute;
+
 }
 .history-loader:before {
-  left: -10px;
-  animation-delay: -0.32s;
+    left: -10px;
+    animation-delay: -0.32s;
 }
 .history-loader:after {
-  left: 10px;
+    left: 10px;
 }
+.history-drop-button {
+    display: none;
+    background: linear-gradient(to left,#2F80ED 0%,#2D83D9 12%,#249173 74%,#219653 93%);
+    border: none;
+    padding: 8px 15px;
+    color: #fff;
+    font-size: 22px;
+    font-family: "Poppins";
+    border-radius: 20px;
 
-@keyframes bblFadInOut {
-  0%, 80%, 100% { box-shadow: 0 2.5em 0 -1.3em }
-  40% { box-shadow: 0 2.5em 0 0 }
 }
-    
+@keyframes bblFadInOut {
+    0%,
+    100%,
+    80% {
+        box-shadow: 0 2.5em 0 -1.3em;
+    }
+    40% {
+        box-shadow: 0 2.5em 0 0;
+    }
+}
+@media only screen and (max-width : 1025px) {
+    .history-head {
+        display: flex;
+        justify-content: flex-end;
+    }
+    .history--dark {
+        .history-drop {
+            background: #101116;
+        }
+    }
+    .history-drop {
+        position: absolute;
+        flex-direction: column;
+        gap: 24px;
+        background-color: #a1aabb;
+        z-index: 10;
+        width: 260px;
+        padding: 20px 15px;
+        border-radius: 20px;
+        top: 100%;
+    }
+    .history-drop-button {
+        display: inline-block;
+    }
+}

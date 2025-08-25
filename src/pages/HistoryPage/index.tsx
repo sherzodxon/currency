@@ -102,6 +102,7 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
     const historyDataString = JSON.parse(localStorage.getItem('history') || '[]');
     const [historyData,setHistoryData] = useState < HistoryItem[] > (historyDataString);
     const error = useSelector((state:any)=>state.error.error);
+    const [dropOpen , setDropOpen] =useState<boolean>(false);
     const dispatch = useDispatch();
     function handleSortOpen() {
         setSortOpen(!sortOpen)
@@ -175,9 +176,11 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
                 type="primary">Qayta boshlash</Button>}/>)
     }
     return (
-        <div className="history">
+        <div className={`history ${dark?"history--dark":""}`}>
             <div className="history-head">
-                <div className="history-checkbox-wrapper">
+                <button className="history-drop-button" onClick={()=>setDropOpen(!dropOpen)}>+</button>
+                <div className="history-drop" style={dropOpen?{display:"flex"}:{display:"none"}}>
+                    <div className="history-checkbox-wrapper">
                     <input
                         className="visually-hidden"
                         type="checkbox"
@@ -225,7 +228,7 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
                         className={`history-date ${dark
                         ? "history-date--dark"
                         : ""}`}
-                        placeholder="Sanani tanlang..."
+                        placeholder="Sana"
                         value={convertToYYYYMMDD(date)}
                         onChange={handleDateChange}
                         options={{
@@ -243,6 +246,7 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
                     <span className="history-button-text">Qabul qilish</span>
                     <span className="history-loader"></span>
                 </button>
+                </div>
             </div>
             <HistoryTable data={historyData}/>
         </div>
