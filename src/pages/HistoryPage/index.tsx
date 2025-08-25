@@ -6,6 +6,8 @@ import Sort from "../../assets/components/Sort";
 import ChevronRight from "../../assets/image/ChevronRight";
 import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/themes/material_green.css';
+import "flatpickr/dist/flatpickr.min.css";
+import "flatpickr/dist/themes/material_blue.css";
 import './index.scss';
 import {CustomLocale} from 'flatpickr/dist/types/locale';
 import HistoryTable from "../../assets/components/HistoryTable";
@@ -102,7 +104,7 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
     const historyDataString = JSON.parse(localStorage.getItem('history') || '[]');
     const [historyData,setHistoryData] = useState < HistoryItem[] > (historyDataString);
     const error = useSelector((state:any)=>state.error.error);
-    const [dropOpen , setDropOpen] =useState<boolean>(false);
+    const [dropOpen , setDropOpen] =useState<boolean>(true);
     const dispatch = useDispatch();
     function handleSortOpen() {
         setSortOpen(!sortOpen)
@@ -165,6 +167,18 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
         setDate(params)
         setButtonDisabled(false)
     }
+    const handleResize = () =>  {
+         if (window.innerWidth <= 1025) {
+            setDropOpen(false)
+        }
+        else
+        setDropOpen(true)
+    }
+    useEffect(()=>{
+        handleResize(); 
+        window.addEventListener("resize", handleResize);
+    },[])
+    
     if (error) {
         return(<Result 
                 status="404"
@@ -228,13 +242,15 @@ const HistoryPage : React.FC < HistoryPageProps > = () => {
                         className={`history-date ${dark
                         ? "history-date--dark"
                         : ""}`}
-                        placeholder="Sana"
+                        placeholder="Sana..."
                         value={convertToYYYYMMDD(date)}
                         onChange={handleDateChange}
+                        
                         options={{
                         locale: Uzbek,
                         dateFormat: "Y-m-d",
-                        maxDate: "today"
+                        maxDate: "today",
+                        disableMobile:true
                     }}/>
                 </div>
                 <button

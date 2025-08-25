@@ -126,7 +126,7 @@ const DashboardPage : React.FC = () => {
         }
     }, [currencies]);
     useEffect(()=>{
-        handleResize(); // birinchi yuklanganda ishlaydi
+        handleResize(); 
         window.addEventListener("resize", handleResize);
     },[])
     useEffect(() => {
